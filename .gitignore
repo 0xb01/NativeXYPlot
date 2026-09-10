@@ -1,0 +1,19 @@
+# Xojo build & debug outputs
+Builds*
+*.debug
+*.debug.app
+Debug*.exe
+Debug*/
+Libs/
+
+# Xojo IDE state & backups
+*.rbuistate
+*.xojo_uistate
+*.obsolete*
+*.backup*
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
