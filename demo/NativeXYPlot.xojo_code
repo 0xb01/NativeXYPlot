@@ -691,10 +691,10 @@ Protected Class NativeXYPlot
 		  Var titleW As Double = 0
 		  If Title.Len > 0 Then
 		    g.DrawingColor = &c000000
-		    g.FontSize = 10.5
+		    g.FontSize = 12
 		    g.Bold = True
 		    titleW = g.TextWidth(Title)
-		    Var titleY As Double = PlotTop - 6
+		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 25)
 		    g.DrawText(Title, PlotLeft, titleY)
 		  End If
 		  
@@ -705,8 +705,18 @@ Protected Class NativeXYPlot
 		    
 		    Select Case LegendPosition
 		    Case 0
-		      // Top Left (horizontal, after title)
-		      Var minLeftX As Double = If(titleW > 0, PlotLeft + titleW + 14, PlotLeft)
+		      // Top Left (horizontal, after Y title)
+		      Var leftOffset As Double = 0
+		      If Y_Title.Len > 0 Then
+		        g.FontSize = 9
+		        g.Bold = True
+		        leftOffset = g.TextWidth(Y_Title) + 14
+		      ElseIf PlotTop <= 30 And titleW > 0 Then
+		        leftOffset = titleW + 14
+		      End If
+		      g.FontSize = 8
+		      g.Bold = False
+		      Var minLeftX As Double = PlotLeft + leftOffset
 		      Var legX As Double = minLeftX
 		      Var legY As Double = PlotTop - 6
 		      
@@ -721,7 +731,7 @@ Protected Class NativeXYPlot
 		            legY = PlotTop - 4
 		            legX = minLeftX
 		          Else
-		            Exit For
+			            Exit For
 		          End If
 		        End If
 		        
@@ -787,8 +797,18 @@ Protected Class NativeXYPlot
 		      End If
 		      
 		    Else
-		      // Top Right - strictly right-aligned, preserving title area on left
-		      Var minLeftX As Double = If(titleW > 0, PlotLeft + titleW + 16, PlotLeft)
+		      // Top Right - strictly right-aligned, preserving title/Y-title area on left
+		      Var leftOffset As Double = 0
+		      If Y_Title.Len > 0 Then
+		        g.FontSize = 9
+		        g.Bold = True
+		        leftOffset = g.TextWidth(Y_Title) + 16
+		      ElseIf PlotTop <= 30 And titleW > 0 Then
+		        leftOffset = titleW + 16
+		      End If
+		      g.FontSize = 8
+		      g.Bold = False
+		      Var minLeftX As Double = PlotLeft + leftOffset
 		      Var availW As Double = Max(50, (PlotLeft + PlotWidth) - minLeftX)
 		      
 		      Var validIndices() As Integer
