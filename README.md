@@ -17,7 +17,7 @@ Zero-dependency 2D plotting and time-series charting library in 100% native Xojo
 
 ## Quickstart
 
-```xojo
+```vb
 // 1. Create and configure plot
 Var plot As New NativeXYPlot(Canvas1.Width, Canvas1.Height)
 plot.AddTitle("Telemetry Monitor")
@@ -38,7 +38,7 @@ Canvas1.Backdrop = plot.MakeChartPicture()
 
 ## Interactive Hover Tracking (Canvas)
 
-```xojo
+```vb
 // Canvas.Opening / Update:
 mBasePicture = mPlot.MakeChartPicture()
 Canvas1.Refresh

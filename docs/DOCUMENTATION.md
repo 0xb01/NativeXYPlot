@@ -94,7 +94,7 @@ flowchart TD
 ## 4. Usage Recipes
 
 ### Numeric Line Chart
-```xojo
+```vb
 Var plot As New NativeXYPlot(Canvas1.Width, Canvas1.Height)
 plot.SetPlotArea(50, 20, Canvas1.Width - 80, Canvas1.Height - 50)
 plot.SetXLinearScale(0, 100)
@@ -105,7 +105,7 @@ Canvas1.Backdrop = plot.MakeChartPicture()
 ```
 
 ### Time-Series IoT Chart with Threshold
-```xojo
+```vb
 Var plot As New NativeXYPlot(Canvas1.Width, Canvas1.Height)
 plot.AddTitle("Temperature Log")
 plot.SetPlotArea(60, 45, Canvas1.Width - 120, Canvas1.Height - 80)
@@ -120,7 +120,7 @@ Canvas1.Backdrop = plot.MakeChartPicture()
 ```
 
 ### Digital State / Relay Timing
-```xojo
+```vb
 Var plot As New NativeXYPlot(Canvas1.Width, Canvas1.Height)
 plot.SetPlotArea(60, 45, Canvas1.Width - 120, Canvas1.Height - 80)
 plot.SetXDateScale(dStart.SecondsFrom1970, dEnd.SecondsFrom1970)
