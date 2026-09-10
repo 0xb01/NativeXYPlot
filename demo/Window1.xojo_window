@@ -54,13 +54,13 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   110
+      Width           =   95
    End
    Begin DesktopButton BtnWave
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "Math Waveforms"
+      Caption         =   "Waveforms"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -69,7 +69,7 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   135
+      Left            =   120
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -85,13 +85,13 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   90
    End
    Begin DesktopButton BtnLive
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "Live Sim Feed"
+      Caption         =   "Live Feed"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -100,7 +100,7 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   260
+      Left            =   215
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -116,7 +116,7 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   110
+      Width           =   85
    End
    Begin DesktopButton BtnStates
       AllowAutoDeactivate=   True
@@ -131,7 +131,7 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   375
+      Left            =   305
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -140,6 +140,37 @@ Begin DesktopWindow Window1
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   12
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   85
+   End
+   Begin DesktopButton BtnSync
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Synced 3-Plot"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   32
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   395
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -162,38 +193,7 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   485
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   0
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   12
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
-   End
-   Begin DesktopButton BtnExport
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Export PNG"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   32
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   580
+      Left            =   505
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -209,13 +209,13 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   95
+      Width           =   85
    End
-   Begin DesktopButton BtnExportPDF
+   Begin DesktopButton BtnExport
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "Export PDF"
+      Caption         =   "Export PNG"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"
@@ -224,7 +224,7 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   680
+      Left            =   595
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -240,7 +240,38 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   95
+      Width           =   85
+   End
+   Begin DesktopButton BtnExportPDF
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Export PDF"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   32
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   685
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   12
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   85
    End
    Begin DesktopCheckBox ChkSeries1
       AllowAutoDeactivate=   True
@@ -415,6 +446,13 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Resized()
+		  // Redraw plot on window maximize / finish resize
+		  RedrawPlot()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub GenerateDemoData()
@@ -423,16 +461,47 @@ End
 		  mIotRoom1.ResizeTo(-1)
 		  mIotRoom2.ResizeTo(-1)
 		  mIotRoom3.ResizeTo(-1)
+		  mIotPower.ResizeTo(-1)
+		  mIotSolar.ResizeTo(-1)
+		  mIotGrid.ResizeTo(-1)
+		  mSyncRelay.ResizeTo(-1)
+		  mSyncFan.ResizeTo(-1)
+		  mSyncPump.ResizeTo(-1)
 		  
 		  Var baseDt As DateTime = DateTime.Now - New DateInterval(0, 0, 7)
 		  For i As Integer = 0 To 168
 		    Var curDt As DateTime = baseDt + New DateInterval(0, 0, 0, i)
 		    mIotDates.Add(curDt)
 		    
+		    // Temperature curves (°C)
 		    Var diurnal As Double = Sin(i * 3.14159 / 12.0) * 2.5
 		    mIotRoom1.Add(22.0 + diurnal + (Rnd * 0.4 - 0.2))
 		    mIotRoom2.Add(20.8 + (Sin((i + 3) * 3.14159 / 12.0) * 2.0) + (Rnd * 0.4 - 0.2))
 		    mIotRoom3.Add(23.2 + (Sin((i + 6) * 3.14159 / 12.0) * 1.8) + (Rnd * 0.4 - 0.2))
+		    
+		    // Power curves (kW)
+		    Var hvacLoad As Double = 1.0 + Max(0.0, Sin((i + 2) * 3.14159 / 12.0)) * 2.8 + (Rnd * 0.3)
+		    Var hrOfDay As Integer = i Mod 24
+		    Var solarGen As Double = 0.0
+		    If hrOfDay >= 6 And hrOfDay <= 18 Then
+		      solarGen = Sin((hrOfDay - 6) * 3.14159 / 12.0) * 4.2 + (Rnd * 0.2)
+		    End If
+		    Var netGrid As Double = Max(0.0, hvacLoad + 0.8 - solarGen)
+		    
+		    mIotPower.Add(hvacLoad)
+		    mIotSolar.Add(solarGen)
+		    mIotGrid.Add(netGrid)
+		    
+		    // Multi-channel digital state timelines (True/False)
+		    If i = 168 Then
+		      mSyncRelay.Add(mSyncRelay(167))
+		      mSyncFan.Add(mSyncFan(167))
+		      mSyncPump.Add(mSyncPump(167))
+		    Else
+		      mSyncRelay.Add(hrOfDay >= 8 And hrOfDay <= 20)
+		      mSyncFan.Add(hrOfDay >= 7 And hrOfDay <= 22)
+		      mSyncPump.Add((i Mod 6) < 4)
+		    End If
 		  Next
 		  
 		  // Generate math waveform data (200 points)
@@ -469,24 +538,120 @@ End
 		  For i As Integer = 0 To 96
 		    Var curDt As DateTime = stateBaseDt + New DateInterval(0, 0, 0, 0, i * 15)
 		    mStateDates.Add(curDt)
-		    mStateRelay.Add((i Mod 32) < 20)
-		    mStatePump.Add((i Mod 16) < 10)
-		    mStateValve.Add((i Mod 8) < 3)
+		    If i = 96 Then
+		      mStateRelay.Add(mStateRelay(95))
+		      mStatePump.Add(mStatePump(95))
+		      mStateValve.Add(mStateValve(95))
+		    Else
+		      mStateRelay.Add((i Mod 32) < 20)
+		      mStatePump.Add((i Mod 16) < 10)
+		      mStateValve.Add((i Mod 8) < 3)
+		    End If
 		  Next
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub RedrawPlot()
-		  // Check canvas size
-		  If PlotCanvas.Width <= 0 Or PlotCanvas.Height <= 0 Then Return
+	#tag Method, Flags = &h21
+		Private Function BuildPlotPicture(targetW As Integer, targetH As Integer) As Picture
+		  If targetW <= 0 Or targetH <= 0 Then Return Nil
+		  Var pic As New Picture(targetW, targetH)
+		  Var g As Graphics = pic.Graphics
+		  g.DrawingColor = &cFFFFFF
+		  g.FillRectangle(0, 0, targetW, targetH)
+		  RenderToGraphics(g, targetW, targetH, (targetW = PlotCanvas.Width And targetH = PlotCanvas.Height))
+		  Return pic
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderToGraphics(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean = False)
+		  If targetW <= 0 Or targetH <= 0 Then Return
 		  
-		  // Create new plot object
-		  Var plot As New NativeXYPlot(PlotCanvas.Width, PlotCanvas.Height)
-		  Self.mPlot = plot
+		  If mCurrentDemoMode = 4 Then
+		    // Mode 4: Linked 3-Plot (Synchronized Crosshairs)
+		    Var firstSec As Double = mIotDates(0).SecondsFrom1970
+		    Var endSec As Double = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		    Var deltaSec As Double = endSec - firstSec
+		    
+		    Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
+		    Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
+		    
+		    Var gap As Integer = 28
+		    Var topMargin As Integer = 45
+		    Var bottomMargin As Integer = 30
+		    Var leftMargin As Integer = 38
+		    Var rightMargin As Integer = 38
+		    Var plotH As Integer = Max(45, (targetH - topMargin - bottomMargin - (gap * 2)) / 3)
+		    Var plotW As Integer = Max(50, targetW - leftMargin - rightMargin)
+		    
+		    // Plot 1: Temperature (Top)
+		    Var p1 As New NativeXYPlot(targetW, targetH)
+		    p1.AddTitle("Synchronized 3-Plot Scrubbing: Multi-Sensor Analytics")
+		    p1.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		    p1.SetXDateScale(curMinSec, curMaxSec)
+		    p1.SetYLinearScale(16.0, 28.0, "°C")
+		    p1.SetYTitle("Temp")
+		    p1.ShowXAxisLabels = False
+		    p1.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
+		    p1.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
+		    p1.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2)
+		    p1.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
+		    
+		    // Plot 2: Power & Solar Generation (Middle)
+		    Var p2 As New NativeXYPlot(targetW, targetH)
+		    p2.SetPlotArea(leftMargin, topMargin + plotH + gap, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		    p2.SetXDateScale(curMinSec, curMaxSec)
+		    p2.SetYLinearScale(0.0, 6.0, " kW")
+		    p2.SetYTitle("Power")
+		    p2.ShowXAxisLabels = False
+		    p2.AddThreshold(0.0, 3.5, &cFFF9C4, &cFFF176)
+		    p2.AddDateSeries(mIotDates, mIotPower, &cE63946, "HVAC Load", 2)
+		    p2.AddDateSeries(mIotDates, mIotSolar, &cE9C46A, "Solar PV", 2)
+		    p2.AddDateSeries(mIotDates, mIotGrid, &c264653, "Grid Draw", 2)
+		    
+		    // Plot 3: Digital Actuators & Relays (Bottom)
+		    Var p3 As New NativeXYPlot(targetW, targetH)
+		    p3.SetPlotArea(leftMargin, topMargin + (plotH + gap) * 2, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		    p3.SetXDateScale(curMinSec, curMaxSec)
+		    p3.SetYDiscreteLabels(Array("Pump", "Fan", "Relay"), -0.2, 3.1)
+		    p3.SetYTitle("Control")
+		    p3.ShowXAxisLabels = True
+		    p3.AddDateBooleanSeries(mIotDates, mSyncRelay, &c2A9D8F, "Compressor", 2, 2.8, 2.1)
+		    p3.AddDateBooleanSeries(mIotDates, mSyncFan, &c3A86FF, "Vent Fan", 2, 1.8, 1.1)
+		    p3.AddDateBooleanSeries(mIotDates, mSyncPump, &c8338EC, "Circ Pump", 2, 0.8, 0.1)
+		    
+		    // Add sync event markers across timeline
+		    Var alertDt As DateTime = DateTime.Now - New DateInterval(0, 0, 4)
+		    Var schedDt As DateTime = DateTime.Now - New DateInterval(0, 0, 2)
+		    p1.AddMarker(alertDt.SecondsFrom1970, "Peak Demand Alert", &cE63946)
+		    p1.AddMarker(schedDt.SecondsFrom1970, "Eco Schedule", &c004C6D)
+		    p2.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
+		    p2.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
+		    p3.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
+		    p3.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
+		    
+		    If updateActivePlot Then
+		      mPlot1 = p1
+		      mPlot2 = p2
+		      mPlot3 = p3
+		      mPlot = p1
+		    End If
+		    
+		    p1.Render(g, False)
+		    p2.Render(g, False)
+		    p3.Render(g, False)
+		    Return
+		  End If
 		  
-		  // Set margins and area
-		  plot.SetPlotArea(60, 45, PlotCanvas.Width - 120, PlotCanvas.Height - 80, &cFFFFFF, &cEAEAEA)
+		  // Single-plot modes (0-3)
+		  Var leftMargin As Integer = 38
+		  Var rightMargin As Integer = 38
+		  Var topMargin As Integer = 45
+		  Var bottomMargin As Integer = 35
+		  Var plotW As Integer = Max(50, targetW - leftMargin - rightMargin)
+		  Var plotH As Integer = Max(45, targetH - topMargin - bottomMargin)
+		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
 		  
 		  Select Case mCurrentDemoMode
 		  Case 0
@@ -552,8 +717,8 @@ End
 		    If ChkSeries2.Value Then plot.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2)
 		    
 		  Case 3
-		    // Mode 3: Digital I/O State Timelines (On/Off)
-		    plot.AddTitle("Digital I/O & Relay Actuator States (ON / OFF)")
+		    // Mode 3: Digital I/O State Timelines (Multi-Channel Actuators)
+		    plot.AddTitle("Digital I/O & Relay Actuator States (Multi-Channel)")
 		    
 		    Var firstSec As Double = mStateDates(0).SecondsFrom1970
 		    Var endSec As Double = mStateDates(mStateDates.LastIndex).SecondsFrom1970
@@ -563,17 +728,28 @@ End
 		    Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
 		    
 		    plot.SetXDateScale(curMinSec, curMaxSec)
-		    plot.SetYDiscreteLabels(Array("OFF", "ON"), -0.2, 1.2)
-		    plot.SetYTitle("State")
+		    plot.SetYDiscreteLabels(Array("Valve", "Pump", "Relay"), -0.2, 3.1)
+		    plot.SetYTitle("Channel")
 		    
-		    // Add boolean digital traces
-		    If ChkSeries1.Value Then plot.AddDateBooleanSeries(mStateDates, mStateRelay, &c3185FC, "Relay 1 (Power)", 2)
-		    If ChkSeries2.Value Then plot.AddDateBooleanSeries(mStateDates, mStatePump, &cE63946, "Coolant Pump", 2)
-		    If ChkSeries3.Value Then plot.AddDateBooleanSeries(mStateDates, mStateValve, &c2A9D8F, "Solenoid Valve", 2)
+		    // Add boolean digital traces into stacked channel lanes
+		    If ChkSeries1.Value Then plot.AddDateBooleanSeries(mStateDates, mStateRelay, &c3185FC, "Relay 1 (Power)", 2, 2.8, 2.1)
+		    If ChkSeries2.Value Then plot.AddDateBooleanSeries(mStateDates, mStatePump, &cE63946, "Coolant Pump", 2, 1.8, 1.1)
+		    If ChkSeries3.Value Then plot.AddDateBooleanSeries(mStateDates, mStateValve, &c2A9D8F, "Solenoid Valve", 2, 0.8, 0.1)
 		  End Select
 		  
-		  // Render base picture and refresh canvas
-		  mBasePicture = plot.MakeChartPicture(PlotCanvas.Width, PlotCanvas.Height)
+		  If updateActivePlot Then
+		    Self.mPlot = plot
+		  End If
+		  
+		  plot.Render(g, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RedrawPlot()
+		  // Check canvas size
+		  If PlotCanvas.Width <= 0 Or PlotCanvas.Height <= 0 Then Return
+		  mBasePicture = BuildPlotPicture(PlotCanvas.Width, PlotCanvas.Height)
 		  PlotCanvas.Refresh
 		End Sub
 	#tag EndMethod
@@ -644,6 +820,14 @@ End
 		    ChkSeries3.Caption = "Solenoid Valve"
 		    ChkSeries3.Visible = True
 		    StatusLabel.Text = "Mode: Digital I/O State Timeline | Toggle checkboxes to hide/show series"
+		  Case 4
+		    ChkSeries1.Caption = "Sync Temp Plot"
+		    ChkSeries1.Visible = True
+		    ChkSeries2.Caption = "Sync Power Plot"
+		    ChkSeries2.Visible = True
+		    ChkSeries3.Caption = "Sync Relay Plot"
+		    ChkSeries3.Visible = True
+		    StatusLabel.Text = "Mode: Synced 3-Plot | Hover any plot to scrub all 3 | Toggle checkboxes to sync/unlink plots"
 		  End Select
 		  
 		  RedrawPlot()
@@ -661,6 +845,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mIotDates() As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIotPower() As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -708,6 +896,22 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPlot1 As NativeXYPlot
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlot2 As NativeXYPlot
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlot3 As NativeXYPlot
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSharedDataX As Double = -1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mStartX As Integer
 	#tag EndProperty
 
@@ -729,6 +933,26 @@ End
 
 	#tag Property, Flags = &h21
 		Private mStateValve() As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIotSolar() As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIotGrid() As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSyncFan() As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSyncPump() As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSyncRelay() As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -790,6 +1014,14 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events BtnSync
+	#tag Event
+		Sub Pressed()
+		  // Switch to Synced 3-Plot Linked Crosshair demo
+		  SetDemoMode(4)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events BtnReset
 	#tag Event
 		Sub Pressed()
@@ -805,9 +1037,11 @@ End
 		  If mPlot Is Nil Then Return
 		  Var f As FolderItem = FolderItem.ShowSaveFileDialog(".png", "NativeXYPlot_Demo.png")
 		  If f <> Nil Then
-		    Var pic As Picture = mPlot.MakeChartPicture(1920, 1080)
-		    pic.Save(f, Picture.Formats.PNG)
-		    f.Open
+		    Var pic As Picture = BuildPlotPicture(1920, 1080)
+		    If pic <> Nil Then
+		      pic.Save(f, Picture.Formats.PNG)
+		      f.Open
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -819,7 +1053,12 @@ End
 		  If mPlot Is Nil Then Return
 		  Var f As FolderItem = FolderItem.ShowSaveFileDialog(".pdf", "NativeXYPlot_Demo.pdf")
 		  If f <> Nil Then
-		    mPlot.ExportPDF(f)
+		    Var doc As New PDFDocument
+		    doc.Landscape = True
+		    doc.Title = "NativeXYPlot Export"
+		    Var g As Graphics = doc.Graphics
+		    RenderToGraphics(g, g.Width, g.Height, False)
+		    doc.Save(f)
 		    f.Open
 		  End If
 		End Sub
@@ -880,6 +1119,15 @@ End
 		  // Track cursor position for overlay
 		  mMouseX = X
 		  mMouseY = Y
+		  
+		  If mCurrentDemoMode = 4 Then
+		    If mPlot1 <> Nil And X >= mPlot1.PlotLeft And X <= mPlot1.PlotLeft + mPlot1.PlotWidth Then
+		      mSharedDataX = mPlot1.GetNearestXValue(X)
+		    Else
+		      mSharedDataX = -1
+		    End If
+		  End If
+		  
 		  Me.Refresh
 		End Sub
 	#tag EndEvent
@@ -923,9 +1171,18 @@ End
 		    g.DrawPicture(mBasePicture, 0, 0)
 		  End If
 		  
-		  // Draw tracking overlay crosshair on top
-		  If mPlot <> Nil And mMouseX >= 0 Then
-		    mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True)
+		  If mCurrentDemoMode = 4 Then
+		    // Draw linked crosshair overlay across selected plots
+		    If mSharedDataX >= 0 Then
+		      If ChkSeries1.Value And mPlot1 <> Nil Then mPlot1.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+		      If ChkSeries2.Value And mPlot2 <> Nil Then mPlot2.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+		      If ChkSeries3.Value And mPlot3 <> Nil Then mPlot3.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+		    End If
+		  Else
+		    // Draw tracking overlay crosshair on top
+		    If mPlot <> Nil And mMouseX >= 0 Then
+		      mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent

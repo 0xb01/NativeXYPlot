@@ -152,15 +152,106 @@ Protected Class NativeXYPlot
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ClipLine(ByRef x1 As Double, ByRef y1 As Double, ByRef x2 As Double, ByRef y2 As Double, xMin As Double, yMin As Double, xMax As Double, yMax As Double) As Boolean
+		  // Cohen-Sutherland line clipping algorithm
+		  Var code1 As Integer = 0
+		  If x1 < xMin Then
+		    code1 = code1 Or 1
+		  ElseIf x1 > xMax Then
+		    code1 = code1 Or 2
+		  End If
+		  If y1 < yMin Then
+		    code1 = code1 Or 8
+		  ElseIf y1 > yMax Then
+		    code1 = code1 Or 4
+		  End If
+		  
+		  Var code2 As Integer = 0
+		  If x2 < xMin Then
+		    code2 = code2 Or 1
+		  ElseIf x2 > xMax Then
+		    code2 = code2 Or 2
+		  End If
+		  If y2 < yMin Then
+		    code2 = code2 Or 8
+		  ElseIf y2 > yMax Then
+		    code2 = code2 Or 4
+		  End If
+		  
+		  While True
+		    If (code1 Or code2) = 0 Then
+		      Return True
+		    ElseIf (code1 And code2) <> 0 Then
+		      Return False
+		    Else
+		      Var outCode As Integer
+		      If code1 <> 0 Then
+		        outCode = code1
+		      Else
+		        outCode = code2
+		      End If
+		      
+		      Var newX As Double = 0.0
+		      Var newY As Double = 0.0
+		      
+		      If (outCode And 8) <> 0 Then
+		        If y2 <> y1 Then newX = x1 + (x2 - x1) * (yMin - y1) / (y2 - y1)
+		        newY = yMin
+		      ElseIf (outCode And 4) <> 0 Then
+		        If y2 <> y1 Then newX = x1 + (x2 - x1) * (yMax - y1) / (y2 - y1)
+		        newY = yMax
+		      ElseIf (outCode And 2) <> 0 Then
+		        If x2 <> x1 Then newY = y1 + (y2 - y1) * (xMax - x1) / (x2 - x1)
+		        newX = xMax
+		      ElseIf (outCode And 1) <> 0 Then
+		        If x2 <> x1 Then newY = y1 + (y2 - y1) * (xMin - x1) / (x2 - x1)
+		        newX = xMin
+		      End If
+		      
+		      If outCode = code1 Then
+		        x1 = newX
+		        y1 = newY
+		        code1 = 0
+		        If x1 < xMin Then
+		          code1 = code1 Or 1
+		        ElseIf x1 > xMax Then
+		          code1 = code1 Or 2
+		        End If
+		        If y1 < yMin Then
+		          code1 = code1 Or 8
+		        ElseIf y1 > yMax Then
+		          code1 = code1 Or 4
+		        End If
+		      Else
+		        x2 = newX
+		        y2 = newY
+		        code2 = 0
+		        If x2 < xMin Then
+		          code2 = code2 Or 1
+		        ElseIf x2 > xMax Then
+		          code2 = code2 Or 2
+		        End If
+		        If y2 < yMin Then
+		          code2 = code2 Or 8
+		        ElseIf y2 > yMax Then
+		          code2 = code2 Or 4
+		        End If
+		      End If
+		    End If
+		  Wend
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(w As Integer = 600, h As Integer = 400)
 		  // Set default dimensions and styling
 		  Width = w
 		  Height = h
-		  PlotLeft = 50
+		  PlotLeft = 38
 		  PlotTop = 45
-		  PlotWidth = Max(50, w - 100)
-		  PlotHeight = Max(50, h - 75)
+		  PlotWidth = Max(50, w - 76)
+		  PlotHeight = Max(50, h - 80)
 		  PlotBgColor = &cFFFFFF
 		  GridColor = &cE0E0E0
 		  DualYAxis = True
@@ -177,9 +268,19 @@ Protected Class NativeXYPlot
 		    Return
 		  End If
 		  
-		  // Find nearest data X
+		  // Find nearest data X and draw overlay
 		  Var nearestX As Double = GetNearestXValue(mouseX)
-		  Var trackScreenX As Double = ValueToScreenX(nearestX)
+		  DrawTrackingOverlayByValue(g, nearestX, showValues)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawTrackingOverlayByValue(g As Graphics, targetDataX As Double, showValues As Boolean = True)
+		  // Check if graphics is valid and target X is within visible range
+		  If g Is Nil Then Return
+		  If targetDataX < X_Min - 1e-9 Or targetDataX > X_Max + 1e-9 Then Return
+		  
+		  Var trackScreenX As Double = ValueToScreenX(targetDataX)
 		  If trackScreenX < PlotLeft Or trackScreenX > PlotLeft + PlotWidth Then Return
 		  
 		  // Draw vertical tracking guide line
@@ -190,12 +291,17 @@ Protected Class NativeXYPlot
 		    curY = curY + 8
 		  Wend
 		  
-		  // Draw date badge on bottom axis
-		  If IsDateAxis Then
-		    Var dt As New DateTime(nearestX, TimeZone.Current)
-		    Var xBadgeStr As String = dt.ToString("dd/MM/yyyy HH:mm")
+		  // Draw X badge on bottom axis
+		  If ShowXAxisLabels Then
 		    g.FontSize = 8
 		    g.Bold = True
+		    Var xBadgeStr As String
+		    If IsDateAxis Then
+		      Var dt As New DateTime(targetDataX, TimeZone.Current)
+		      xBadgeStr = dt.ToString("dd/MM/yyyy HH:mm")
+		    Else
+		      xBadgeStr = targetDataX.ToString("0.##")
+		    End If
 		    Var bW As Double = g.TextWidth(xBadgeStr) + 8
 		    Var bH As Double = g.TextHeight + 4
 		    Var bX As Double = Max(PlotLeft, Min(trackScreenX - bW / 2, PlotLeft + PlotWidth - bW))
@@ -232,7 +338,7 @@ Protected Class NativeXYPlot
 		    Var foundIdx As Integer = -1
 		    Var bestDist As Double = 1e30
 		    For i As Integer = 0 To xVals.LastIndex
-		      Var dist As Double = Abs(xVals(i) - nearestX)
+		      Var dist As Double = Abs(xVals(i) - targetDataX)
 		      If dist < bestDist Then
 		        bestDist = dist
 		        foundIdx = i
@@ -246,21 +352,26 @@ Protected Class NativeXYPlot
 		      If ptX >= PlotLeft And ptX <= PlotLeft + PlotWidth And ptY >= PlotTop And ptY <= PlotTop + PlotHeight Then
 		        Var sColor As Color = SeriesColors(s)
 		        
-		        // Draw curve point dot
+		        // Draw curve point dot (strictly clamped inside plot area)
+		        Var dotRadius As Double = 3.5
+		        Var drawDotX As Double = Max(PlotLeft + dotRadius, Min(ptX, PlotLeft + PlotWidth - dotRadius))
+		        Var drawDotY As Double = Max(PlotTop + dotRadius, Min(ptY, PlotTop + PlotHeight - dotRadius))
+		        
 		        g.DrawingColor = sColor
-		        g.FillOval(ptX - 4, ptY - 4, 8, 8)
+		        g.FillOval(drawDotX - dotRadius, drawDotY - dotRadius, dotRadius * 2, dotRadius * 2)
 		        g.DrawingColor = &cFFFFFF
-		        g.DrawOval(ptX - 4, ptY - 4, 8, 8)
+		        g.DrawOval(drawDotX - dotRadius, drawDotY - dotRadius, dotRadius * 2, dotRadius * 2)
 		        
 		        If showValues Then
 		          // Format value label
 		          Var valStr As String
-		          If UseDiscreteY And Y_DiscreteLabels.Count > 0 Then
-		            Var idx As Integer = Round(yVals(foundIdx))
-		            If idx >= 0 And idx <= Y_DiscreteLabels.LastIndex Then
-		              valStr = Y_DiscreteLabels(idx)
+		          Var isStep As Boolean = (s <= SeriesIsStep.LastIndex And SeriesIsStep(s))
+		          If isStep Or UseDiscreteY Then
+		            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
+		            If fractional > 0.4 Or yVals(foundIdx) >= 0.8 Then
+		              valStr = "ON"
 		            Else
-		              valStr = yVals(foundIdx).ToString("0.##")
+		              valStr = "OFF"
 		            End If
 		          Else
 		            valStr = yVals(foundIdx).ToString("0.##") + Y_Unit
@@ -268,10 +379,10 @@ Protected Class NativeXYPlot
 		          
 		          Var vW As Double = g.TextWidth(valStr) + 8
 		          Var vH As Double = g.TextHeight + 4
-		          Var rawY As Double = Max(PlotTop, Min(ptY - vH / 2, PlotTop + PlotHeight - vH))
+		          Var rawY As Double = Max(PlotTop, Min(drawDotY - vH / 2, PlotTop + PlotHeight - vH))
 		          
-		          ptXs.Add(ptX)
-		          ptYs.Add(ptY)
+		          ptXs.Add(drawDotX)
+		          ptYs.Add(drawDotY)
 		          badgeYs.Add(rawY)
 		          badgeWs.Add(vW)
 		          badgeHs.Add(vH)
@@ -351,18 +462,18 @@ Protected Class NativeXYPlot
 		      
 		      Var vX As Double
 		      If pX <= PlotLeft + (PlotWidth / 2) Then
-		        vX = pX + 8
+		        vX = Max(PlotLeft + 2, Min(pX + 8, PlotLeft + PlotWidth - vW - 2))
 		      Else
-		        vX = pX - vW - 8
+		        vX = Max(PlotLeft + 2, Min(pX - vW - 8, PlotLeft + PlotWidth - vW - 2))
 		      End If
 		      
 		      // Draw leader connector line if badge was shifted vertically
-		      If Abs(vY + (vH / 2) - pY) > 6 Then
+		      If Abs(vY + (vH / 2) - pY) > 5 Then
 		        g.DrawingColor = Color.RGB(sColor.Red, sColor.Green, sColor.Blue, 150)
 		        If pX <= PlotLeft + (PlotWidth / 2) Then
-		          g.DrawLine(pX + 4, pY, vX, vY + (vH / 2))
+		          g.DrawLine(pX + 3.5, pY, vX, vY + (vH / 2))
 		        Else
-		          g.DrawLine(pX - 4, pY, vX + vW, vY + (vH / 2))
+		          g.DrawLine(pX - 3.5, pY, vX + vW, vY + (vH / 2))
 		        End If
 		      End If
 		      
@@ -430,14 +541,14 @@ Protected Class NativeXYPlot
 		    Var origW As Integer = PlotWidth
 		    Var origH As Integer = PlotHeight
 		    
-		    PlotLeft = 50
+		    PlotLeft = 38
 		    PlotTop = 45
 		    If LegendPosition = 2 Then
-		      PlotWidth = Max(50, g.Width - 170)
+		      PlotWidth = Max(50, g.Width - 150)
 		    Else
-		      PlotWidth = Max(50, g.Width - 100)
+		      PlotWidth = Max(50, g.Width - 76)
 		    End If
-		    PlotHeight = Max(50, g.Height - 75)
+		    PlotHeight = Max(50, g.Height - 80)
 		    
 		    Render(g)
 		    
@@ -466,13 +577,15 @@ Protected Class NativeXYPlot
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Render(g As Graphics)
+		Sub Render(g As Graphics, clearBackground As Boolean = True)
 		  // Check if graphics is valid
 		  If g Is Nil Then Return
 		  
-		  // Draw outer background
-		  g.DrawingColor = &cFFFFFF
-		  g.FillRectangle(0, 0, g.Width, g.Height)
+		  // Draw outer background if requested
+		  If clearBackground Then
+		    g.DrawingColor = &cFFFFFF
+		    g.FillRectangle(0, 0, g.Width, g.Height)
+		  End If
 		  
 		  // Draw plot background
 		  g.DrawingColor = PlotBgColor
@@ -483,7 +596,8 @@ Protected Class NativeXYPlot
 		    g.DrawingColor = &c000000
 		    g.FontSize = 13
 		    g.Bold = True
-		    g.DrawText(Title, PlotLeft, PlotTop - 25)
+		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 25)
+		    g.DrawText(Title, PlotLeft, titleY)
 		  End If
 		  
 		  // Draw legends
@@ -591,21 +705,21 @@ Protected Class NativeXYPlot
 		  If ShowThreshold Then
 		    Var yA As Double = ValueToScreenY(Threshold_A)
 		    Var yB As Double = ValueToScreenY(Threshold_B)
-		    Var topY As Double = Max(PlotTop, Min(yA, yB))
-		    Var botY As Double = Min(PlotTop + PlotHeight, Max(yA, yB))
+		    Var topY As Double = Max(PlotTop + 1, Min(yA, yB))
+		    Var botY As Double = Min(PlotTop + PlotHeight - 1, Max(yA, yB))
 		    Var hZone As Double = Max(0, botY - topY)
 		    
 		    g.DrawingColor = ThresholdZoneColor
 		    If hZone > 0 Then
-		      g.FillRectangle(PlotLeft, topY, PlotWidth, hZone)
+		      g.FillRectangle(PlotLeft + 1, topY, PlotWidth - 1, hZone)
 		    End If
 		    
 		    g.DrawingColor = ThresholdColor
-		    If yA >= PlotTop And yA <= PlotTop + PlotHeight Then
-		      g.DrawLine(PlotLeft, yA, PlotLeft + PlotWidth, yA)
+		    If yA >= PlotTop + 1 And yA <= PlotTop + PlotHeight - 1 Then
+		      g.DrawLine(PlotLeft + 1, yA, PlotLeft + PlotWidth - 1, yA)
 		    End If
-		    If yB >= PlotTop And yB <= PlotTop + PlotHeight Then
-		      g.DrawLine(PlotLeft, yB, PlotLeft + PlotWidth, yB)
+		    If yB >= PlotTop + 1 And yB <= PlotTop + PlotHeight - 1 Then
+		      g.DrawLine(PlotLeft + 1, yB, PlotLeft + PlotWidth - 1, yB)
 		    End If
 		  End If
 		  
@@ -613,23 +727,33 @@ Protected Class NativeXYPlot
 		  g.FontSize = 8
 		  g.Bold = False
 		  If UseDiscreteY And Y_DiscreteLabels.Count > 0 Then
-		    // Discrete text labels (e.g. OFF / ON)
+		    // Discrete text labels (e.g. OFF / ON or multi-channel digital tracks)
 		    For d As Integer = 0 To Y_DiscreteLabels.LastIndex
 		      Var dVal As Double = d * 1.0
 		      Var sy As Double = ValueToScreenY(dVal)
-		      If sy >= PlotTop And sy <= PlotTop + PlotHeight Then
+		      If sy >= PlotTop + 1 And sy <= PlotTop + PlotHeight - 1 Then
 		        g.DrawingColor = GridColor
-		        g.DrawLine(PlotLeft, sy, PlotLeft + PlotWidth, sy)
+		        g.DrawLine(PlotLeft + 1, sy, PlotLeft + PlotWidth - 1, sy)
 		        
 		        g.DrawingColor = &c333333
 		        g.DrawLine(PlotLeft - 4, sy, PlotLeft, sy)
 		        Var labelStr As String = Y_DiscreteLabels(d)
 		        Var strW As Double = g.TextWidth(labelStr)
-		        g.DrawText(labelStr, PlotLeft - strW - 6, sy + (g.FontAscent / 2) - 1)
 		        
-		        If DualYAxis Then
-		          g.DrawLine(PlotLeft + PlotWidth, sy, PlotLeft + PlotWidth + 4, sy)
-		          g.DrawText(labelStr, PlotLeft + PlotWidth + 6, sy + (g.FontAscent / 2) - 1)
+		        // Position label centered in its channel lane if multi-channel, else on tick
+		        Var labelY As Double
+		        If Y_DiscreteLabels.Count > 2 Then
+		          labelY = ValueToScreenY(dVal + 0.45) + (g.FontAscent / 2) - 1
+		        Else
+		          labelY = sy + (g.FontAscent / 2) - 1
+		        End If
+		        
+		        If labelY >= PlotTop - 5 And labelY <= PlotTop + PlotHeight + 5 Then
+		          g.DrawText(labelStr, PlotLeft - strW - 6, labelY)
+		          If DualYAxis Then
+		            g.DrawLine(PlotLeft + PlotWidth, sy, PlotLeft + PlotWidth + 4, sy)
+		            g.DrawText(labelStr, PlotLeft + PlotWidth + 6, labelY)
+		          End If
 		        End If
 		      End If
 		    Next
@@ -656,9 +780,9 @@ Protected Class NativeXYPlot
 		    Var currY As Double = startY
 		    While currY <= Y_Max + (stepY * 0.001)
 		      Var sy As Double = ValueToScreenY(currY)
-		      If sy >= PlotTop And sy <= PlotTop + PlotHeight Then
+		      If sy >= PlotTop + 1 And sy <= PlotTop + PlotHeight - 1 Then
 		        g.DrawingColor = GridColor
-		        g.DrawLine(PlotLeft, sy, PlotLeft + PlotWidth, sy)
+		        g.DrawLine(PlotLeft + 1, sy, PlotLeft + PlotWidth - 1, sy)
 		        
 		        g.DrawingColor = &c333333
 		        g.DrawLine(PlotLeft - 4, sy, PlotLeft, sy)
@@ -711,22 +835,24 @@ Protected Class NativeXYPlot
 		    Var currX As Double = startX
 		    While currX <= X_Max + (stepX * 0.001)
 		      Var sx As Double = ValueToScreenX(currX)
-		      If sx >= PlotLeft And sx <= PlotLeft + PlotWidth Then
+		      If sx >= PlotLeft + 1 And sx <= PlotLeft + PlotWidth - 1 Then
 		        g.DrawingColor = GridColor
-		        g.DrawLine(sx, PlotTop, sx, PlotTop + PlotHeight)
+		        g.DrawLine(sx, PlotTop + 1, sx, PlotTop + PlotHeight - 1)
 		        
-		        g.DrawingColor = &c333333
-		        g.DrawLine(sx, PlotTop + PlotHeight, sx, PlotTop + PlotHeight + 4)
-		        
-		        Var dt As New DateTime(currX, TimeZone.Current)
-		        Var dateLbl As String
-		        If xSpan > 2 * 86400 Then
-		          dateLbl = dt.ToString("dd/MM")
-		        Else
-		          dateLbl = dt.ToString("dd/MM HH:mm")
+		        If ShowXAxisLabels Then
+		          g.DrawingColor = &c333333
+		          g.DrawLine(sx, PlotTop + PlotHeight, sx, PlotTop + PlotHeight + 4)
+		          
+		          Var dt As New DateTime(currX, TimeZone.Current)
+		          Var dateLbl As String
+		          If xSpan > 2 * 86400 Then
+		            dateLbl = dt.ToString("dd/MM")
+		          Else
+		            dateLbl = dt.ToString("dd/MM HH:mm")
+		          End If
+		          Var lblW As Double = g.TextWidth(dateLbl)
+		          g.DrawText(dateLbl, sx - (lblW / 2), PlotTop + PlotHeight + g.FontAscent + 4)
 		        End If
-		        Var lblW As Double = g.TextWidth(dateLbl)
-		        g.DrawText(dateLbl, sx - (lblW / 2), PlotTop + PlotHeight + g.FontAscent + 4)
 		      End If
 		      currX = currX + stepX
 		    Wend
@@ -753,24 +879,22 @@ Protected Class NativeXYPlot
 		    Var currX As Double = startX
 		    While currX <= X_Max + (stepX * 0.001)
 		      Var sx As Double = ValueToScreenX(currX)
-		      If sx >= PlotLeft And sx <= PlotLeft + PlotWidth Then
+		      If sx >= PlotLeft + 1 And sx <= PlotLeft + PlotWidth - 1 Then
 		        g.DrawingColor = GridColor
-		        g.DrawLine(sx, PlotTop, sx, PlotTop + PlotHeight)
+		        g.DrawLine(sx, PlotTop + 1, sx, PlotTop + PlotHeight - 1)
 		        
-		        g.DrawingColor = &c333333
-		        g.DrawLine(sx, PlotTop + PlotHeight, sx, PlotTop + PlotHeight + 4)
-		        
-		        Var numLbl As String = currX.ToString("0.##")
-		        Var lblW As Double = g.TextWidth(numLbl)
-		        g.DrawText(numLbl, sx - (lblW / 2), PlotTop + PlotHeight + g.FontAscent + 4)
+		        If ShowXAxisLabels Then
+		          g.DrawingColor = &c333333
+		          g.DrawLine(sx, PlotTop + PlotHeight, sx, PlotTop + PlotHeight + 4)
+		          
+		          Var numLbl As String = currX.ToString("0.##")
+		          Var lblW As Double = g.TextWidth(numLbl)
+		          g.DrawText(numLbl, sx - (lblW / 2), PlotTop + PlotHeight + g.FontAscent + 4)
+		        End If
 		      End If
 		      currX = currX + stepX
 		    Wend
 		  End If
-		  
-		  // Draw plot border box
-		  g.DrawingColor = &c333333
-		  g.DrawRectangle(PlotLeft, PlotTop, PlotWidth, PlotHeight)
 		  
 		  // Draw data curves
 		  For s As Integer = 0 To SeriesCount - 1
@@ -796,68 +920,71 @@ Protected Class NativeXYPlot
 		        Var rawY2 As Double = ValueToScreenY(yVals(i + 1))
 		        
 		        // Horizontal segment
-		        If Not ((rawX1 < PlotLeft And rawX2 < PlotLeft) Or (rawX1 > PlotLeft + PlotWidth And rawX2 > PlotLeft + PlotWidth) Or rawY1 < PlotTop Or rawY1 > PlotTop + PlotHeight) Then
-		          Var hx1 As Double = Max(PlotLeft, Min(rawX1, PlotLeft + PlotWidth))
-		          Var hx2 As Double = Max(PlotLeft, Min(rawX2, PlotLeft + PlotWidth))
-		          Var hy As Double = Max(PlotTop, Min(rawY1, PlotTop + PlotHeight))
-		          For w As Integer = 0 To lWidth - 1
-		            g.DrawLine(hx1, hy + w, hx2, hy + w)
-		          Next
-		        End If
-		        
-		        // Vertical transition segment
-		        If rawX2 >= PlotLeft And rawX2 <= PlotLeft + PlotWidth Then
-		          If Not ((rawY1 < PlotTop And rawY2 < PlotTop) Or (rawY1 > PlotTop + PlotHeight And rawY2 > PlotTop + PlotHeight)) Then
-		            Var vy1 As Double = Max(PlotTop, Min(rawY1, PlotTop + PlotHeight))
-		            Var vy2 As Double = Max(PlotTop, Min(rawY2, PlotTop + PlotHeight))
+		        If rawY1 >= PlotTop And rawY1 <= PlotTop + PlotHeight Then
+		          If Not ((rawX1 < PlotLeft And rawX2 < PlotLeft) Or (rawX1 > PlotLeft + PlotWidth And rawX2 > PlotLeft + PlotWidth)) Then
+		            Var hx1 As Double = Max(PlotLeft, Min(rawX1, PlotLeft + PlotWidth))
+		            Var hx2 As Double = Max(PlotLeft, Min(rawX2, PlotLeft + PlotWidth))
 		            For w As Integer = 0 To lWidth - 1
-		              g.DrawLine(rawX2 + w, vy1, rawX2 + w, vy2)
+		              If rawY1 + w <= PlotTop + PlotHeight Then
+		                g.DrawLine(hx1, rawY1 + w, hx2, rawY1 + w)
+		              End If
 		            Next
 		          End If
 		        End If
 		        
-		        // Point symbol
-		        If showSym And rawX1 >= PlotLeft And rawX1 <= PlotLeft + PlotWidth And rawY1 >= PlotTop And rawY1 <= PlotTop + PlotHeight Then
-		          g.FillOval(rawX1 - 3, rawY1 - 3, 6, 6)
+		        // Vertical transition segment (only within visible plot bounds, suppress on right edge)
+		        If rawX2 >= PlotLeft And rawX2 < PlotLeft + PlotWidth - 0.5 Then
+		          If Not ((rawY1 < PlotTop And rawY2 < PlotTop) Or (rawY1 > PlotTop + PlotHeight And rawY2 > PlotTop + PlotHeight)) Then
+		            Var vy1 As Double = Max(PlotTop, Min(rawY1, PlotTop + PlotHeight))
+		            Var vy2 As Double = Max(PlotTop, Min(rawY2, PlotTop + PlotHeight))
+		            For w As Integer = 0 To lWidth - 1
+		              If rawX2 + w < PlotLeft + PlotWidth Then
+		                g.DrawLine(rawX2 + w, vy1, rawX2 + w, vy2)
+		              End If
+		            Next
+		          End If
+		        End If
+		        
+		        // Point symbol (strictly inside plot area)
+		        If showSym Then
+		          If rawX1 >= PlotLeft + 3 And rawX1 <= PlotLeft + PlotWidth - 3 And rawY1 >= PlotTop + 3 And rawY1 <= PlotTop + PlotHeight - 3 Then
+		            g.FillOval(rawX1 - 3, rawY1 - 3, 6, 6)
+		          End If
 		        End If
 		      Next
 		    Else
-		      // Draw linear lines
+		      // Draw linear lines with Cohen-Sutherland clipping
 		      For i As Integer = 0 To ptCount - 2
-		        Var rawX1 As Double = ValueToScreenX(xVals(i))
-		        Var rawY1 As Double = ValueToScreenY(yVals(i))
-		        Var rawX2 As Double = ValueToScreenX(xVals(i + 1))
-		        Var rawY2 As Double = ValueToScreenY(yVals(i + 1))
+		        Var x1 As Double = ValueToScreenX(xVals(i))
+		        Var y1 As Double = ValueToScreenY(yVals(i))
+		        Var x2 As Double = ValueToScreenX(xVals(i + 1))
+		        Var y2 As Double = ValueToScreenY(yVals(i + 1))
 		        
-		        If (rawX1 < PlotLeft And rawX2 < PlotLeft) Or (rawX1 > PlotLeft + PlotWidth And rawX2 > PlotLeft + PlotWidth) Then
-		          Continue
+		        If ClipLine(x1, y1, x2, y2, PlotLeft, PlotTop, PlotLeft + PlotWidth, PlotTop + PlotHeight) Then
+		          For w As Integer = 0 To lWidth - 1
+		            If y1 + w <= PlotTop + PlotHeight And y2 + w <= PlotTop + PlotHeight Then
+		              g.DrawLine(x1, y1 + w, x2, y2 + w)
+		            End If
+		          Next
 		        End If
-		        If (rawY1 < PlotTop And rawY2 < PlotTop) Or (rawY1 > PlotTop + PlotHeight And rawY2 > PlotTop + PlotHeight) Then
-		          Continue
-		        End If
 		        
-		        Var x1 As Double = Max(PlotLeft, Min(rawX1, PlotLeft + PlotWidth))
-		        Var y1 As Double = Max(PlotTop, Min(rawY1, PlotTop + PlotHeight))
-		        Var x2 As Double = Max(PlotLeft, Min(rawX2, PlotLeft + PlotWidth))
-		        Var y2 As Double = Max(PlotTop, Min(rawY2, PlotTop + PlotHeight))
-		        
-		        For w As Integer = 0 To lWidth - 1
-		          g.DrawLine(x1, y1 + w, x2, y2 + w)
-		        Next
-		        
-		        // Point symbol
-		        If showSym And rawX1 >= PlotLeft And rawX1 <= PlotLeft + PlotWidth And rawY1 >= PlotTop And rawY1 <= PlotTop + PlotHeight Then
-		          g.FillOval(rawX1 - 3, rawY1 - 3, 6, 6)
+		        // Point symbol (strictly inside plot area)
+		        If showSym Then
+		          Var symX As Double = ValueToScreenX(xVals(i))
+		          Var symY As Double = ValueToScreenY(yVals(i))
+		          If symX >= PlotLeft + 3 And symX <= PlotLeft + PlotWidth - 3 And symY >= PlotTop + 3 And symY <= PlotTop + PlotHeight - 3 Then
+		            g.FillOval(symX - 3, symY - 3, 6, 6)
+		          End If
 		        End If
 		      Next
 		    End If
 		    
 		    // Last point symbol
 		    If showSym And ptCount > 0 Then
-		      Var xLast As Double = ValueToScreenX(xVals(ptCount - 1))
-		      Var yLast As Double = ValueToScreenY(yVals(ptCount - 1))
-		      If xLast >= PlotLeft And xLast <= PlotLeft + PlotWidth And yLast >= PlotTop And yLast <= PlotTop + PlotHeight Then
-		        g.FillOval(xLast - 3, yLast - 3, 6, 6)
+		      Var symX As Double = ValueToScreenX(xVals(ptCount - 1))
+		      Var symY As Double = ValueToScreenY(yVals(ptCount - 1))
+		      If symX >= PlotLeft + 3 And symX <= PlotLeft + PlotWidth - 3 And symY >= PlotTop + 3 And symY <= PlotTop + PlotHeight - 3 Then
+		        g.FillOval(symX - 3, symY - 3, 6, 6)
 		      End If
 		    End If
 		  Next
@@ -877,6 +1004,10 @@ Protected Class NativeXYPlot
 		      End If
 		    End If
 		  Next
+		  
+		  // Draw plot border box on top of data
+		  g.DrawingColor = &c333333
+		  g.DrawRectangle(PlotLeft, PlotTop, PlotWidth, PlotHeight)
 		End Sub
 	#tag EndMethod
 
@@ -894,6 +1025,51 @@ Protected Class NativeXYPlot
 		  If PlotHeight <= 0 Then Return Y_Min
 		  Return Y_Min + (PlotTop + PlotHeight - screenY) / PlotHeight * (Y_Max - Y_Min)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetAutoPlotArea(canvasW As Integer, canvasH As Integer, topMargin As Integer = -1, bottomMargin As Integer = -1, leftMargin As Integer = -1, rightMargin As Integer = -1, bgColor As Color = &cFFFFFF, gridCol As Color = &cE0E0E0)
+		  // Auto-calculate responsive plot box dimensions from canvas size
+		  Width = canvasW
+		  Height = canvasH
+		  PlotBgColor = bgColor
+		  GridColor = gridCol
+		  
+		  If leftMargin < 0 Then
+		    leftMargin = 38
+		  End If
+		  
+		  If rightMargin < 0 Then
+		    If DualYAxis Then
+		      rightMargin = 38
+		    Else
+		      rightMargin = 20
+		    End If
+		  End If
+		  
+		  If topMargin < 0 Then
+		    If Title.Len > 0 Then
+		      topMargin = 45
+		    ElseIf ShowLegend And LegendPosition = 1 Then
+		      topMargin = 30
+		    Else
+		      topMargin = 20
+		    End If
+		  End If
+		  
+		  If bottomMargin < 0 Then
+		    If ShowXAxisLabels Then
+		      bottomMargin = 35
+		    Else
+		      bottomMargin = 15
+		    End If
+		  End If
+		  
+		  PlotLeft = leftMargin
+		  PlotTop = topMargin
+		  PlotWidth = Max(10, canvasW - leftMargin - rightMargin)
+		  PlotHeight = Max(10, canvasH - topMargin - bottomMargin)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -929,15 +1105,15 @@ Protected Class NativeXYPlot
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetYDiscreteLabels(labels() As String, minVal As Double = -0.2, maxVal As Double = 0.0)
-		  // Set custom text labels for Y axis (e.g. OFF / ON)
+		Sub SetYDiscreteLabels(labels() As String, minVal As Double = -0.2, maxVal As Double = -1.0)
+		  // Set custom text labels for Y axis (e.g. OFF / ON or multi-channel digital tracks)
 		  Y_DiscreteLabels = labels
 		  UseDiscreteY = True
 		  Y_Min = minVal
-		  If maxVal > minVal Then
+		  If maxVal > minVal And maxVal > 0.0 Then
 		    Y_Max = maxVal
 		  Else
-		    Y_Max = Max(1.0, labels.LastIndex * 1.0 + 0.2)
+		    Y_Max = Max(1.0, labels.Count * 1.0 + 0.1)
 		  End If
 		  Y_Unit = ""
 		End Sub
@@ -1075,6 +1251,10 @@ Protected Class NativeXYPlot
 
 	#tag Property, Flags = &h0
 		ShowThreshold As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ShowXAxisLabels As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

@@ -11,6 +11,7 @@ Zero-dependency 2D plotting and time-series charting library in 100% native Xojo
 - **Pure Native**: Desktop & Web compatible (`Graphics`, `Picture`).
 - **Data Modes**: Time-Series (`DateTime`), Numeric Linear, Boolean / Digital Step-Lines, Discrete Y Labels.
 - **Fast Interactive Tracking**: Decoupled static bitmap buffer + 60 FPS hover overlay (`DrawTrackingOverlay`).
+- **Synchronized Scrubbing**: Link multiple subplots to a single cursor across time/numeric domains (`DrawTrackingOverlayByValue`).
 - **Annotations**: Tolerance bands (`AddThreshold`), vertical markers (`AddMarker`), dual Y axes, customizable legends.
 
 ---
@@ -39,22 +40,13 @@ Canvas1.Backdrop = plot.MakeChartPicture()
 ## Interactive Hover Tracking (Canvas)
 
 ```vb
-// Canvas.Opening / Update:
-mBasePicture = mPlot.MakeChartPicture()
-Canvas1.Refresh
+// Single Plot:
+mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True)
 
-// Canvas.MouseMove:
-mMouseX = X
-mMouseY = Y
-Canvas1.Refresh
-
-// Canvas.Paint:
-Sub Paint(g As Graphics, areas() As Rect)
-  If mBasePicture <> Nil Then g.DrawPicture(mBasePicture, 0, 0)
-  If mPlot <> Nil And mMouseX >= 0 Then
-    mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True)
-  End If
-End Sub
+// Linked Multi-Plot (Synchronized Crosshairs):
+mPlot1.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+mPlot2.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+mPlot3.DrawTrackingOverlayByValue(g, mSharedDataX, True)
 ```
 
 ---

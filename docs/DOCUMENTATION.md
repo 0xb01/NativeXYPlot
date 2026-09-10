@@ -60,8 +60,9 @@ flowchart TD
 | Method | Description |
 | :--- | :--- |
 | `MakeChartPicture([w], [h]) As Picture` | Render static bitmap image. |
-| `Render(g As Graphics)` | Draw complete chart directly to target graphics context. |
-| `DrawTrackingOverlay(g, mouseX, mouseY, [showValues])` | Draw interactive crosshair and snapped value badges. |
+| `Render(g As Graphics, [clearBackground])` | Draw complete chart directly to target graphics context (set `clearBackground=False` when drawing stacked subplots). |
+| `DrawTrackingOverlay(g, mouseX, mouseY, [showValues])` | Draw interactive crosshair and snapped value badges from screen cursor pixel coordinates. |
+| `DrawTrackingOverlayByValue(g, targetDataX, [showValues])` | Draw crosshair and badges snapped to a specific X data domain value (for multi-plot sync). |
 | `ValueToScreenX(val)` / `ValueToScreenY(val)` | Convert data value to screen pixel coordinate. |
 | `ScreenToValueX(px)` / `ScreenToValueY(px)` | Convert screen pixel coordinate to data value. |
 | `GetNearestXValue(pixelX) As Double` | Find closest X data value to cursor. |
@@ -73,8 +74,8 @@ flowchart TD
 | Property | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `Width`, `Height` | `Integer` | `600`, `400` | Overall canvas / export dimensions in pixels. |
-| `PlotLeft`, `PlotTop` | `Integer` | `50`, `45` | Interior plot margins in pixels. |
-| `PlotWidth`, `PlotHeight` | `Integer` | `500`, `325` | Interior plot dimensions in pixels. |
+| `PlotLeft`, `PlotTop` | `Integer` | `38`, `45` | Interior plot margins in pixels (tight 38px fits 5 digits). |
+| `PlotWidth`, `PlotHeight` | `Integer` | `524`, `320` | Interior plot dimensions in pixels (`Width - 76`, `Height - 80`). |
 | `PlotBgColor`, `GridColor` | `Color` | `&cFFFFFF`, `&cE0E0E0` | Plot background and gridline colors. |
 | `Title`, `Y_Title`, `X_AxisTitle` | `String` | `""` | Chart and axis titles. |
 | `DualYAxis` | `Boolean` | `True` | Draw symmetrical right-side Y ticks/labels. |
@@ -87,6 +88,7 @@ flowchart TD
 | `Y_Unit` | `String` | `""` | Unit suffix for Y values (e.g. `"°C"`). |
 | `Y_TickDensity` | `Integer` | `30` | Pixel density controlling Y tick frequency. |
 | `IsDateAxis` | `Boolean` | `False` | Time-series epoch date mode toggle. |
+| `ShowXAxisLabels` | `Boolean` | `True` | Toggle bottom X tick lines and text labels (set `False` on upper subplots in stacked views). |
 | `SeriesCount` | `Integer` | `0` | Number of active series. |
 
 ---
@@ -119,13 +121,47 @@ plot.AddMarker(eventDate.SecondsFrom1970, "Event", &cE63946)
 Canvas1.Backdrop = plot.MakeChartPicture()
 ```
 
-### Digital State / Relay Timing
+### Digital State / Multi-Channel Actuator Timing
 ```vb
 Var plot As New NativeXYPlot(Canvas1.Width, Canvas1.Height)
-plot.SetPlotArea(60, 45, Canvas1.Width - 120, Canvas1.Height - 80)
+plot.SetPlotArea(70, 45, Canvas1.Width - 130, Canvas1.Height - 80)
 plot.SetXDateScale(dStart.SecondsFrom1970, dEnd.SecondsFrom1970)
-plot.SetYDiscreteLabels(Array("OFF", "ON"), -0.2, 1.2)
-plot.AddDateBooleanSeries(dateArray, pumpStates, &cE63946, "Pump", 2)
+plot.SetYDiscreteLabels(Array("Valve", "Pump", "Relay"), -0.2, 3.1)
+plot.SetYTitle("Channel")
+
+// Stack channels into distinct vertical lanes (highVal, lowVal):
+plot.AddDateBooleanSeries(dateArray, valveStates, &c2A9D8F, "Valve", 2, 0.8, 0.1)
+plot.AddDateBooleanSeries(dateArray, pumpStates, &cE63946, "Pump", 2, 1.8, 1.1)
+plot.AddDateBooleanSeries(dateArray, relayStates, &c3185FC, "Relay", 2, 2.8, 2.1)
 
 Canvas1.Backdrop = plot.MakeChartPicture()
+```
+
+### Synchronized Multi-Plot Crosshairs (N Stacked Graphs)
+```vb
+// 1. Layout N subplots vertically (hide X labels on upper subplots):
+Plot1.ShowXAxisLabels = False // Upper plot
+Plot2.ShowXAxisLabels = False // Middle plot
+Plot3.ShowXAxisLabels = True  // Bottom plot (draws shared X timeline)
+
+// 2. In Canvas MouseMove: convert cursor X to shared domain X
+Sub MouseMove(X As Integer, Y As Integer)
+  If X >= Plot1.PlotLeft And X <= Plot1.PlotLeft + Plot1.PlotWidth Then
+    mSharedDataX = Plot1.GetNearestXValue(X)
+  Else
+    mSharedDataX = -1
+  End If
+  Canvas1.Refresh
+End Sub
+
+// 3. In Canvas Paint: render crosshairs on all linked plots
+Sub Paint(g As Graphics, areas() As Rect)
+  g.DrawPicture(mBasePicture, 0, 0)
+  
+  If mSharedDataX >= 0 Then
+    If ChkSyncPlot1.Value Then Plot1.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+    If ChkSyncPlot2.Value Then Plot2.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+    If ChkSyncPlot3.Value Then Plot3.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+  End If
+End Sub
 ```
