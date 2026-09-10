@@ -122,6 +122,85 @@ Protected Class NativeXYPlot
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AutoScale(marginPercent As Double = 0.05, includeZero As Boolean = False)
+		  // Automatically calculate X and Y scales based on all added series
+		  AutoScaleX(0.0)
+		  AutoScaleY(marginPercent, includeZero)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AutoScaleX(marginPercent As Double = 0.0)
+		  // Automatically set X min/max from all series
+		  If SeriesCount = 0 Then Return
+		  
+		  Var foundAny As Boolean = False
+		  Var minX As Double = 1e30
+		  Var maxX As Double = -1e30
+		  
+		  For s As Integer = 0 To SeriesCount - 1
+		    Var xVals() As Double = SeriesX(s)
+		    For Each x As Double In xVals
+		      If x < minX Then minX = x
+		      If x > maxX Then maxX = x
+		      foundAny = True
+		    Next
+		  Next
+		  
+		  If Not foundAny Then Return
+		  
+		  If maxX <= minX Then
+		    If IsDateAxis Then
+		      maxX = minX + 3600
+		    Else
+		      maxX = minX + 1.0
+		    End If
+		  End If
+		  
+		  Var span As Double = maxX - minX
+		  Var pad As Double = span * marginPercent
+		  X_Min = minX - pad
+		  X_Max = maxX + pad
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AutoScaleY(marginPercent As Double = 0.05, includeZero As Boolean = False)
+		  // Automatically set Y min/max from all series
+		  If SeriesCount = 0 Or UseDiscreteY Then Return
+		  
+		  Var foundAny As Boolean = False
+		  Var minY As Double = 1e30
+		  Var maxY As Double = -1e30
+		  
+		  For s As Integer = 0 To SeriesCount - 1
+		    Var yVals() As Double = SeriesY(s)
+		    For Each y As Double In yVals
+		      If y < minY Then minY = y
+		      If y > maxY Then maxY = y
+		      foundAny = True
+		    Next
+		  Next
+		  
+		  If Not foundAny Then Return
+		  
+		  If includeZero Then
+		    If minY > 0.0 Then minY = 0.0
+		    If maxY < 0.0 Then maxY = 0.0
+		  End If
+		  
+		  If maxY <= minY Then
+		    maxY = minY + 1.0
+		  End If
+		  
+		  Var span As Double = maxY - minY
+		  Var pad As Double = span * marginPercent
+		  Y_Min = minY - pad
+		  Y_Max = maxY + pad
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ClearMarkers()
 		  // Remove all markers
 		  Var emptyD() As Double
@@ -278,9 +357,10 @@ Protected Class NativeXYPlot
 		Sub DrawTrackingOverlayByValue(g As Graphics, targetDataX As Double, showValues As Boolean = True)
 		  // Check if graphics is valid and target X is within visible range
 		  If g Is Nil Then Return
-		  If targetDataX < X_Min - 1e-9 Or targetDataX > X_Max + 1e-9 Then Return
+		  If targetDataX < X_Min - 1e-6 Or targetDataX > X_Max + 1e-6 Then Return
 		  
-		  Var trackScreenX As Double = ValueToScreenX(targetDataX)
+		  Var clampedTargetX As Double = Max(X_Min, Min(targetDataX, X_Max))
+		  Var trackScreenX As Double = ValueToScreenX(clampedTargetX)
 		  If trackScreenX < PlotLeft Or trackScreenX > PlotLeft + PlotWidth Then Return
 		  
 		  // Draw vertical tracking guide line
@@ -297,10 +377,10 @@ Protected Class NativeXYPlot
 		    g.Bold = True
 		    Var xBadgeStr As String
 		    If IsDateAxis Then
-		      Var dt As New DateTime(targetDataX, TimeZone.Current)
+		      Var dt As New DateTime(clampedTargetX, TimeZone.Current)
 		      xBadgeStr = dt.ToString("dd/MM/yyyy HH:mm")
 		    Else
-		      xBadgeStr = targetDataX.ToString("0.##")
+		      xBadgeStr = clampedTargetX.ToString("0.##")
 		    End If
 		    Var bW As Double = g.TextWidth(xBadgeStr) + 8
 		    Var bH As Double = g.TextHeight + 4
@@ -338,7 +418,7 @@ Protected Class NativeXYPlot
 		    Var foundIdx As Integer = -1
 		    Var bestDist As Double = 1e30
 		    For i As Integer = 0 To xVals.LastIndex
-		      Var dist As Double = Abs(xVals(i) - targetDataX)
+		      Var dist As Double = Abs(xVals(i) - clampedTargetX)
 		      If dist < bestDist Then
 		        bestDist = dist
 		        foundIdx = i
@@ -349,7 +429,8 @@ Protected Class NativeXYPlot
 		      Var ptX As Double = ValueToScreenX(xVals(foundIdx))
 		      Var ptY As Double = ValueToScreenY(yVals(foundIdx))
 		      
-		      If ptX >= PlotLeft And ptX <= PlotLeft + PlotWidth And ptY >= PlotTop And ptY <= PlotTop + PlotHeight Then
+		      // Process series point if within visible X range (with 4px margin)
+		      If ptX >= PlotLeft - 4 And ptX <= PlotLeft + PlotWidth + 4 Then
 		        Var sColor As Color = SeriesColors(s)
 		        
 		        // Draw curve point dot (strictly clamped inside plot area)
@@ -367,7 +448,7 @@ Protected Class NativeXYPlot
 		          Var valStr As String
 		          Var isStep As Boolean = (s <= SeriesIsStep.LastIndex And SeriesIsStep(s))
 		          If isStep Or UseDiscreteY Then
-		            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
+			            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
 		            If fractional > 0.4 Or yVals(foundIdx) >= 0.8 Then
 		              valStr = "ON"
 		            Else
@@ -489,23 +570,32 @@ Protected Class NativeXYPlot
 
 	#tag Method, Flags = &h0
 		Function GetNearestXValue(screenX As Double) As Double
-		  // Find closest X data value across all series
+		  // Find closest X data value across all series within visible range
 		  Var xTarget As Double = ScreenToValueX(screenX)
 		  Var bestX As Double = xTarget
 		  Var bestDist As Double = 1e30
+		  Var found As Boolean = False
 		  
 		  For s As Integer = 0 To SeriesCount - 1
 		    Var xVals() As Double = SeriesX(s)
 		    If xVals.Count = 0 Then Continue
 		    
 		    For i As Integer = 0 To xVals.LastIndex
-		      Var dist As Double = Abs(xVals(i) - xTarget)
-		      If dist < bestDist Then
-		        bestDist = dist
-		        bestX = xVals(i)
+		      Var curX As Double = xVals(i)
+		      If curX >= X_Min - 1e-6 And curX <= X_Max + 1e-6 Then
+		        Var dist As Double = Abs(curX - xTarget)
+		        If dist < bestDist Then
+		          bestDist = dist
+		          bestX = curX
+		          found = True
+		        End If
 		      End If
 		    Next
 		  Next
+		  
+		  If Not found Then
+		    bestX = Max(X_Min, Min(xTarget, X_Max))
+		  End If
 		  
 		  Return bestX
 		End Function

@@ -42,6 +42,9 @@ flowchart TD
 | `SetYLinearScale(minVal, maxVal, [unitStr])` | Configure linear numeric Y-axis with unit suffix (e.g. `"°C"`). |
 | `SetYDiscreteLabels(labels(), [minVal], [maxVal])` | Configure discrete categorical Y-axis (e.g. `Array("OFF", "ON")`). |
 | `SetYTitle(titleText)` | Set label above Y-axis. |
+| `AutoScale([marginPercent], [includeZero])` | Automatically compute and fit both X and Y axis scales to cover all series data. |
+| `AutoScaleX([marginPercent])` | Automatically compute and fit X axis limits to cover all series X data. |
+| `AutoScaleY([marginPercent], [includeZero])` | Automatically compute and fit Y axis limits to cover all series Y data with optional margin padding. |
 
 ### Data Series & Annotations
 | Method | Description |
