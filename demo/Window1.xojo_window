@@ -565,183 +565,234 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RenderToGraphics(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean = False)
+		  // Route rendering to active demo mode recipe
 		  If targetW <= 0 Or targetH <= 0 Then Return
 		  
-		  If mCurrentDemoMode = 4 Then
-		    // Mode 4: Linked 3-Plot (Synchronized Crosshairs)
-		    Var firstSec As Double = mIotDates(0).SecondsFrom1970
-		    Var endSec As Double = mIotDates(mIotDates.LastIndex).SecondsFrom1970
-		    Var deltaSec As Double = endSec - firstSec
-		    
-		    Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
-		    Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
-		    
-		    Var gap As Integer = 28
-		    Var topMargin As Integer = 45
-		    Var bottomMargin As Integer = 30
-		    Var leftMargin As Integer = 38
-		    Var rightMargin As Integer = 38
-		    Var plotH As Integer = Max(45, (targetH - topMargin - bottomMargin - (gap * 2)) / 3)
-		    Var plotW As Integer = Max(50, targetW - leftMargin - rightMargin)
-		    
-		    // Plot 1: Temperature (Top)
-		    Var p1 As New NativeXYPlot(targetW, targetH)
-		    p1.AddTitle("Synchronized 3-Plot Scrubbing: Multi-Sensor Analytics")
-		    p1.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
-		    p1.SetXDateScale(curMinSec, curMaxSec)
-		    p1.SetYLinearScale(16.0, 28.0, "°C")
-		    p1.SetYTitle("Temp")
-		    p1.ShowXAxisLabels = False
-		    p1.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
-		    p1.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
-		    p1.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2)
-		    p1.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
-		    
-		    // Plot 2: Power & Solar Generation (Middle)
-		    Var p2 As New NativeXYPlot(targetW, targetH)
-		    p2.SetPlotArea(leftMargin, topMargin + plotH + gap, plotW, plotH, &cFFFFFF, &cEAEAEA)
-		    p2.SetXDateScale(curMinSec, curMaxSec)
-		    p2.SetYLinearScale(0.0, 6.0, " kW")
-		    p2.SetYTitle("Power")
-		    p2.ShowXAxisLabels = False
-		    p2.AddThreshold(0.0, 3.5, &cFFF9C4, &cFFF176)
-		    p2.AddDateSeries(mIotDates, mIotPower, &cE63946, "HVAC Load", 2)
-		    p2.AddDateSeries(mIotDates, mIotSolar, &cE9C46A, "Solar PV", 2)
-		    p2.AddDateSeries(mIotDates, mIotGrid, &c264653, "Grid Draw", 2)
-		    
-		    // Plot 3: Digital Actuators & Relays (Bottom)
-		    Var p3 As New NativeXYPlot(targetW, targetH)
-		    p3.SetPlotArea(leftMargin, topMargin + (plotH + gap) * 2, plotW, plotH, &cFFFFFF, &cEAEAEA)
-		    p3.SetXDateScale(curMinSec, curMaxSec)
-		    p3.SetYDiscreteLabels(Array("Pump", "Fan", "Relay"), -0.2, 3.1)
-		    p3.SetYTitle("Control")
-		    p3.ShowXAxisLabels = True
-		    p3.AddDateBooleanSeries(mIotDates, mSyncRelay, &c2A9D8F, "Compressor", 2, 2.8, 2.1)
-		    p3.AddDateBooleanSeries(mIotDates, mSyncFan, &c3A86FF, "Vent Fan", 2, 1.8, 1.1)
-		    p3.AddDateBooleanSeries(mIotDates, mSyncPump, &c8338EC, "Circ Pump", 2, 0.8, 0.1)
-		    
-		    // Add sync event markers across timeline
-		    Var alertDt As DateTime = DateTime.Now - New DateInterval(0, 0, 4)
-		    Var schedDt As DateTime = DateTime.Now - New DateInterval(0, 0, 2)
-		    p1.AddMarker(alertDt.SecondsFrom1970, "Peak Demand Alert", &cE63946)
-		    p1.AddMarker(schedDt.SecondsFrom1970, "Eco Schedule", &c004C6D)
-		    p2.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
-		    p2.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
-		    p3.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
-		    p3.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
-		    
-		    If updateActivePlot Then
-		      mPlot1 = p1
-		      mPlot2 = p2
-		      mPlot3 = p3
-		      mPlot = p1
-		    End If
-		    
-		    p1.Render(g, False)
-		    p2.Render(g, False)
-		    p3.Render(g, False)
-		    Return
-		  End If
+		  Select Case mCurrentDemoMode
+		  Case 0
+		    RenderMode0_IoT(g, targetW, targetH, updateActivePlot)
+		  Case 1
+		    RenderMode1_MathWaveforms(g, targetW, targetH, updateActivePlot)
+		  Case 2
+		    RenderMode2_LiveStream(g, targetW, targetH, updateActivePlot)
+		  Case 3
+		    RenderMode3_DigitalIO(g, targetW, targetH, updateActivePlot)
+		  Case 4
+		    RenderMode4_SyncedPlots(g, targetW, targetH, updateActivePlot)
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode0_IoT(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: IoT Climate Telemetry & Comfort Thresholds
+		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.AddTitle("HVAC Climate Telemetry & Comfort Thresholds")
 		  
-		  // Single-plot modes (0-3)
 		  Var leftMargin As Integer = 38
 		  Var rightMargin As Integer = 38
 		  Var topMargin As Integer = 45
 		  Var bottomMargin As Integer = 35
-		  Var plotW As Integer = Max(50, targetW - leftMargin - rightMargin)
-		  Var plotH As Integer = Max(45, targetH - topMargin - bottomMargin)
-		  Var plot As New NativeXYPlot(targetW, targetH)
-		  plot.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		  plot.SetPlotArea(leftMargin, topMargin, Max(50, targetW - leftMargin - rightMargin), Max(45, targetH - topMargin - bottomMargin), &cFFFFFF, &cEAEAEA)
 		  
-		  Select Case mCurrentDemoMode
-		  Case 0
-		    // Mode 0: IoT Climate Telemetry
-		    plot.AddTitle("HVAC Climate Telemetry & Comfort Thresholds")
-		    
-		    Var firstSec As Double = mIotDates(0).SecondsFrom1970
-		    Var endSec As Double = mIotDates(mIotDates.LastIndex).SecondsFrom1970
-		    Var deltaSec As Double = endSec - firstSec
-		    
-		    Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
-		    Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
-		    
-		    plot.SetXDateScale(curMinSec, curMaxSec)
-		    plot.SetYLinearScale(16.0, 28.0, "°C")
-		    plot.SetYTitle("Temperature")
-		    
-		    // Highlight comfort zone (20°C - 24°C)
-		    plot.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
-		    
-		    // Add series if checkbox is checked
-		    If ChkSeries1.Value Then plot.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
-		    If ChkSeries2.Value Then plot.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Master Bedroom", 2)
-		    If ChkSeries3.Value Then plot.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
-		    
-		    // Add event markers
-		    Var event1 As DateTime = DateTime.Now - New DateInterval(0, 0, 5)
-		    Var event2 As DateTime = DateTime.Now - New DateInterval(0, 0, 2)
-		    plot.AddMarker(event1.SecondsFrom1970, "Occupancy Mode", &c004C6D)
-		    plot.AddMarker(event2.SecondsFrom1970, "Filter Cleaned", &c6A4C93)
-		    
-		  Case 1
-		    // Mode 1: Math Waveforms
-		    plot.AddTitle("Harmonic Waveforms & Damped Oscillations")
-		    
-		    Var totalSpan As Double = 100.0
-		    Var curMinX As Double = totalSpan * mViewPortLeft
-		    Var curMaxX As Double = curMinX + totalSpan * mViewPortWidth
-		    
-		    plot.SetXLinearScale(curMinX, curMaxX)
-		    plot.SetYLinearScale(-10.0, 10.0, " V")
-		    plot.SetYTitle("Voltage")
-		    
-		    // Highlight threshold range
-		    plot.AddThreshold(-5.0, 5.0, &cFFF8E1, &cFFD54F)
-		    If ChkSeries1.Value Then plot.AddSeries(mWaveX, mWaveY1, &c3185FC, "Primary Sine", 2)
-		    If ChkSeries2.Value Then plot.AddSeries(mWaveX, mWaveY2, &cE63946, "Damped Cosine", 2)
-		    If ChkSeries3.Value Then plot.AddSeries(mWaveX, mWaveY3, &c2A9D8F, "Harmonic", 1, True)
-		    
-		  Case 2
-		    // Mode 2: Live Telemetry Stream
-		    plot.AddTitle("Real-Time Telemetry Feed (250ms Buffer)")
-		    
-		    Var minX As Double = mLiveX(0)
-		    Var maxX As Double = mLiveX(mLiveX.LastIndex)
-		    plot.SetXLinearScale(minX, maxX)
-		    plot.SetYLinearScale(0.0, 100.0, " psi")
-		    plot.SetYTitle("Pressure")
-		    
-		    // Highlight safe pressure zone
-		    plot.AddThreshold(30.0, 70.0, &cE0F2F1, &c4DB6AC)
-		    If ChkSeries1.Value Then plot.AddSeries(mLiveX, mLiveY1, &c0077B6, "Feed A", 2)
-		    If ChkSeries2.Value Then plot.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2)
-		    
-		  Case 3
-		    // Mode 3: Digital I/O State Timelines (Multi-Channel Actuators)
-		    plot.AddTitle("Digital I/O & Relay Actuator States (Multi-Channel)")
-		    
-		    Var firstSec As Double = mStateDates(0).SecondsFrom1970
-		    Var endSec As Double = mStateDates(mStateDates.LastIndex).SecondsFrom1970
-		    Var deltaSec As Double = endSec - firstSec
-		    
-		    Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
-		    Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
-		    
-		    plot.SetXDateScale(curMinSec, curMaxSec)
-		    plot.SetYDiscreteLabels(Array("Valve", "Pump", "Relay"), -0.2, 3.1)
-		    plot.SetYTitle("Channel")
-		    
-		    // Add boolean digital traces into stacked channel lanes
-		    If ChkSeries1.Value Then plot.AddDateBooleanSeries(mStateDates, mStateRelay, &c3185FC, "Relay 1 (Power)", 2, 2.8, 2.1)
-		    If ChkSeries2.Value Then plot.AddDateBooleanSeries(mStateDates, mStatePump, &cE63946, "Coolant Pump", 2, 1.8, 1.1)
-		    If ChkSeries3.Value Then plot.AddDateBooleanSeries(mStateDates, mStateValve, &c2A9D8F, "Solenoid Valve", 2, 0.8, 0.1)
-		  End Select
+		  Var firstSec As Double = mIotDates(0).SecondsFrom1970
+		  Var endSec As Double = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		  Var deltaSec As Double = endSec - firstSec
+		  Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
+		  Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
+		  
+		  plot.SetXDateScale(curMinSec, curMaxSec)
+		  plot.SetYLinearScale(16.0, 28.0, "°C")
+		  plot.SetYTitle("Temperature")
+		  
+		  // Highlight comfort zone (20°C - 24°C)
+		  plot.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
+		  
+		  // Add series if checkbox is checked
+		  If ChkSeries1.Value Then plot.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
+		  If ChkSeries2.Value Then plot.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Master Bedroom", 2)
+		  If ChkSeries3.Value Then plot.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
+		  
+		  // Add event markers
+		  Var event1 As DateTime = DateTime.Now - New DateInterval(0, 0, 5)
+		  Var event2 As DateTime = DateTime.Now - New DateInterval(0, 0, 2)
+		  plot.AddMarker(event1.SecondsFrom1970, "Occupancy Mode", &c004C6D)
+		  plot.AddMarker(event2.SecondsFrom1970, "Filter Cleaned", &c6A4C93)
+		  
+		  If updateActivePlot Then Self.mPlot = plot
+		  plot.Render(g, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode1_MathWaveforms(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: Numeric Math Waveforms & Damped Oscillations
+		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.AddTitle("Harmonic Waveforms & Damped Oscillations")
+		  
+		  Var leftMargin As Integer = 38
+		  Var rightMargin As Integer = 38
+		  Var topMargin As Integer = 45
+		  Var bottomMargin As Integer = 35
+		  plot.SetPlotArea(leftMargin, topMargin, Max(50, targetW - leftMargin - rightMargin), Max(45, targetH - topMargin - bottomMargin), &cFFFFFF, &cEAEAEA)
+		  
+		  Var totalSpan As Double = 100.0
+		  Var curMinX As Double = totalSpan * mViewPortLeft
+		  Var curMaxX As Double = curMinX + totalSpan * mViewPortWidth
+		  
+		  plot.SetXLinearScale(curMinX, curMaxX)
+		  plot.SetYLinearScale(-10.0, 10.0, " V")
+		  plot.SetYTitle("Voltage")
+		  
+		  // Highlight threshold range
+		  plot.AddThreshold(-5.0, 5.0, &cFFF8E1, &cFFD54F)
+		  
+		  // Add series if checkbox is checked
+		  If ChkSeries1.Value Then plot.AddSeries(mWaveX, mWaveY1, &c3185FC, "Primary Sine", 2)
+		  If ChkSeries2.Value Then plot.AddSeries(mWaveX, mWaveY2, &cE63946, "Damped Cosine", 2)
+		  If ChkSeries3.Value Then plot.AddSeries(mWaveX, mWaveY3, &c2A9D8F, "Harmonic", 1, True)
+		  
+		  If updateActivePlot Then Self.mPlot = plot
+		  plot.Render(g, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode2_LiveStream(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: Real-Time Telemetry Streaming Buffer (250ms interval)
+		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.AddTitle("Real-Time Telemetry Feed (250ms Buffer)")
+		  
+		  Var leftMargin As Integer = 38
+		  Var rightMargin As Integer = 38
+		  Var topMargin As Integer = 45
+		  Var bottomMargin As Integer = 35
+		  plot.SetPlotArea(leftMargin, topMargin, Max(50, targetW - leftMargin - rightMargin), Max(45, targetH - topMargin - bottomMargin), &cFFFFFF, &cEAEAEA)
+		  
+		  Var minX As Double = mLiveX(0)
+		  Var maxX As Double = mLiveX(mLiveX.LastIndex)
+		  
+		  plot.SetXLinearScale(minX, maxX)
+		  plot.SetYLinearScale(0.0, 100.0, " psi")
+		  plot.SetYTitle("Pressure")
+		  
+		  // Highlight safe pressure zone
+		  plot.AddThreshold(30.0, 70.0, &cE0F2F1, &c4DB6AC)
+		  
+		  // Add streaming feed series
+		  If ChkSeries1.Value Then plot.AddSeries(mLiveX, mLiveY1, &c0077B6, "Feed A", 2)
+		  If ChkSeries2.Value Then plot.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2)
+		  
+		  If updateActivePlot Then Self.mPlot = plot
+		  plot.Render(g, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode3_DigitalIO(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: Multi-Channel Digital I/O State Timelines (ON/OFF Logic Lanes)
+		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.AddTitle("Digital I/O & Relay Actuator States (Multi-Channel)")
+		  
+		  Var leftMargin As Integer = 38
+		  Var rightMargin As Integer = 38
+		  Var topMargin As Integer = 45
+		  Var bottomMargin As Integer = 35
+		  plot.SetPlotArea(leftMargin, topMargin, Max(50, targetW - leftMargin - rightMargin), Max(45, targetH - topMargin - bottomMargin), &cFFFFFF, &cEAEAEA)
+		  
+		  Var firstSec As Double = mStateDates(0).SecondsFrom1970
+		  Var endSec As Double = mStateDates(mStateDates.LastIndex).SecondsFrom1970
+		  Var deltaSec As Double = endSec - firstSec
+		  Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
+		  Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
+		  
+		  plot.SetXDateScale(curMinSec, curMaxSec)
+		  plot.SetYDiscreteLabels(Array("Valve", "Pump", "Relay"), -0.2, 3.1)
+		  plot.SetYTitle("Channel")
+		  
+		  // Add boolean digital traces into stacked channel lanes
+		  If ChkSeries1.Value Then plot.AddDateBooleanSeries(mStateDates, mStateRelay, &c3185FC, "Relay 1 (Power)", 2, 2.8, 2.1)
+		  If ChkSeries2.Value Then plot.AddDateBooleanSeries(mStateDates, mStatePump, &cE63946, "Coolant Pump", 2, 1.8, 1.1)
+		  If ChkSeries3.Value Then plot.AddDateBooleanSeries(mStateDates, mStateValve, &c2A9D8F, "Solenoid Valve", 2, 0.8, 0.1)
+		  
+		  If updateActivePlot Then Self.mPlot = plot
+		  plot.Render(g, False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode4_SyncedPlots(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: Synchronized Multi-Plot Scrubbing (3 Stacked Subplots)
+		  Var firstSec As Double = mIotDates(0).SecondsFrom1970
+		  Var endSec As Double = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		  Var deltaSec As Double = endSec - firstSec
+		  Var curMinSec As Double = firstSec + deltaSec * mViewPortLeft
+		  Var curMaxSec As Double = curMinSec + deltaSec * mViewPortWidth
+		  
+		  Var gap As Integer = 28
+		  Var topMargin As Integer = 45
+		  Var bottomMargin As Integer = 30
+		  Var leftMargin As Integer = 38
+		  Var rightMargin As Integer = 38
+		  Var plotH As Integer = Max(45, (targetH - topMargin - bottomMargin - (gap * 2)) / 3)
+		  Var plotW As Integer = Max(50, targetW - leftMargin - rightMargin)
+		  
+		  // Plot 1: Temperature (Top)
+		  Var p1 As New NativeXYPlot(targetW, targetH)
+		  p1.AddTitle("Synchronized 3-Plot Scrubbing: Multi-Sensor Analytics")
+		  p1.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		  p1.SetXDateScale(curMinSec, curMaxSec)
+		  p1.SetYLinearScale(16.0, 28.0, "°C")
+		  p1.SetYTitle("Temp")
+		  p1.ShowXAxisLabels = False
+		  p1.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
+		  p1.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
+		  p1.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2)
+		  p1.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
+		  
+		  // Plot 2: Power & Solar Generation (Middle)
+		  Var p2 As New NativeXYPlot(targetW, targetH)
+		  p2.SetPlotArea(leftMargin, topMargin + plotH + gap, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		  p2.SetXDateScale(curMinSec, curMaxSec)
+		  p2.SetYLinearScale(0.0, 6.0, " kW")
+		  p2.SetYTitle("Power")
+		  p2.ShowXAxisLabels = False
+		  p2.AddThreshold(0.0, 3.5, &cFFF9C4, &cFFF176)
+		  p2.AddDateSeries(mIotDates, mIotPower, &cE63946, "HVAC Load", 2)
+		  p2.AddDateSeries(mIotDates, mIotSolar, &cE9C46A, "Solar PV", 2)
+		  p2.AddDateSeries(mIotDates, mIotGrid, &c264653, "Grid Draw", 2)
+		  
+		  // Plot 3: Digital Actuators & Relays (Bottom)
+		  Var p3 As New NativeXYPlot(targetW, targetH)
+		  p3.SetPlotArea(leftMargin, topMargin + (plotH + gap) * 2, plotW, plotH, &cFFFFFF, &cEAEAEA)
+		  p3.SetXDateScale(curMinSec, curMaxSec)
+		  p3.SetYDiscreteLabels(Array("Pump", "Fan", "Relay"), -0.2, 3.1)
+		  p3.SetYTitle("Control")
+		  p3.ShowXAxisLabels = True
+		  p3.AddDateBooleanSeries(mIotDates, mSyncRelay, &c2A9D8F, "Compressor", 2, 2.8, 2.1)
+		  p3.AddDateBooleanSeries(mIotDates, mSyncFan, &c3A86FF, "Vent Fan", 2, 1.8, 1.1)
+		  p3.AddDateBooleanSeries(mIotDates, mSyncPump, &c8338EC, "Circ Pump", 2, 0.8, 0.1)
+		  
+		  // Add sync event markers across timeline
+		  Var alertDt As DateTime = DateTime.Now - New DateInterval(0, 0, 4)
+		  Var schedDt As DateTime = DateTime.Now - New DateInterval(0, 0, 2)
+		  p1.AddMarker(alertDt.SecondsFrom1970, "Peak Demand Alert", &cE63946)
+		  p1.AddMarker(schedDt.SecondsFrom1970, "Eco Schedule", &c004C6D)
+		  p2.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
+		  p2.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
+		  p3.AddMarker(alertDt.SecondsFrom1970, "", &cE63946)
+		  p3.AddMarker(schedDt.SecondsFrom1970, "", &c004C6D)
 		  
 		  If updateActivePlot Then
-		    Self.mPlot = plot
+		    mPlot1 = p1
+		    mPlot2 = p2
+		    mPlot3 = p3
+		    mPlot = p1
 		  End If
 		  
-		  plot.Render(g, False)
+		  p1.Render(g, False)
+		  p2.Render(g, False)
+		  p3.Render(g, False)
 		End Sub
 	#tag EndMethod
 
