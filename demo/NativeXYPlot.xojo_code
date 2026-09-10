@@ -448,7 +448,7 @@ Protected Class NativeXYPlot
 		          Var valStr As String
 		          Var isStep As Boolean = (s <= SeriesIsStep.LastIndex And SeriesIsStep(s))
 		          If isStep Or UseDiscreteY Then
-		            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
+			            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
 		            If fractional > 0.4 Or yVals(foundIdx) >= 0.8 Then
 		              valStr = "ON"
 		            Else
@@ -688,35 +688,48 @@ Protected Class NativeXYPlot
 		  g.FillRectangle(PlotLeft, PlotTop, PlotWidth, PlotHeight)
 		  
 		  // Draw title
+		  Var titleW As Double = 0
 		  If Title.Len > 0 Then
- 		    g.DrawingColor = &c000000
-		    g.FontSize = 12
+		    g.DrawingColor = &c000000
+		    g.FontSize = 10.5
 		    g.Bold = True
-		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 7)
+		    titleW = g.TextWidth(Title)
+		    Var titleY As Double = PlotTop - 6
 		    g.DrawText(Title, PlotLeft, titleY)
 		  End If
 		  
 		  // Draw legends
 		  If ShowLegend And SeriesCount > 0 Then
-		    g.FontSize = 9
+		    g.FontSize = 8
 		    g.Bold = False
 		    
 		    Select Case LegendPosition
 		    Case 0
-		      // Top Left (horizontal above graph)
-		      Var legX As Double = PlotLeft
-		      Var legY As Double = PlotTop - 10
+		      // Top Left (horizontal, after title)
+		      Var minLeftX As Double = If(titleW > 0, PlotLeft + titleW + 14, PlotLeft)
+		      Var legX As Double = minLeftX
+		      Var legY As Double = PlotTop - 6
+		      
 		      For s As Integer = 0 To SeriesCount - 1
 		        Var sName As String = SeriesNames(s)
 		        If sName.Len = 0 Then Continue
 		        Var sCol As Color = SeriesColors(s)
+		        Var itemW As Double = 12 + g.TextWidth(sName) + 6
+		        
+		        If legX + itemW > PlotLeft + PlotWidth Then
+		          If legY < PlotTop - 5 Then
+		            legY = PlotTop - 4
+		            legX = minLeftX
+		          Else
+		            Exit For
+		          End If
+		        End If
 		        
 		        g.DrawingColor = sCol
-		        g.FillRoundRectangle(legX, legY - 6, 12, 6, 2, 2)
+		        g.FillRoundRectangle(legX, legY - 5, 8, 5, 2, 2)
 		        g.DrawingColor = &c333333
-		        g.DrawText(sName, legX + 16, legY)
-		        legX = legX + 20 + g.TextWidth(sName) + 12
-		        If legX > PlotLeft + PlotWidth - 30 Then Exit For
+		        g.DrawText(sName, legX + 11, legY)
+		        legX = legX + itemW
 		      Next
 		      
 		    Case 2
@@ -727,13 +740,13 @@ Protected Class NativeXYPlot
 		        Var sName As String = SeriesNames(s)
 		        If sName.Len = 0 Then Continue
 		        Var sCol As Color = SeriesColors(s)
-		        Var itemY As Double = legY + (s * 20)
+		        Var itemY As Double = legY + (s * 16)
 		        If itemY > PlotTop + PlotHeight Then Exit For
 		        
 		        g.DrawingColor = sCol
-		        g.FillRoundRectangle(legX, itemY - 7, 14, 8, 2, 2)
+		        g.FillRoundRectangle(legX, itemY - 6, 10, 5, 2, 2)
 		        g.DrawingColor = &c333333
-		        g.DrawText(sName, legX + 18, itemY)
+		        g.DrawText(sName, legX + 14, itemY)
 		      Next
 		      
 		    Case 3
@@ -766,34 +779,108 @@ Protected Class NativeXYPlot
 		          Var sCol As Color = SeriesColors(s)
 		          
 		          g.DrawingColor = sCol
-		          g.FillRoundRectangle(boxX + 8, currItemY - 6, 12, 6, 2, 2)
+		          g.FillRoundRectangle(boxX + 8, currItemY - 6, 10, 5, 2, 2)
 		          g.DrawingColor = &c333333
-		          g.DrawText(sName, boxX + 24, currItemY)
+		          g.DrawText(sName, boxX + 22, currItemY)
 		          currItemY = currItemY + 18
 		        Next
 		      End If
 		      
 		    Else
-		      // Top Right (horizontal above graph, right-aligned) - Default (1)
+		      // Top Right - strictly right-aligned, preserving title area on left
+		      Var minLeftX As Double = If(titleW > 0, PlotLeft + titleW + 16, PlotLeft)
+		      Var availW As Double = Max(50, (PlotLeft + PlotWidth) - minLeftX)
+		      
+		      Var validIndices() As Integer
+		      Var itemWidths() As Double
 		      Var totalW As Double = 0
+		      
 		      For s As Integer = 0 To SeriesCount - 1
 		        Var sName As String = SeriesNames(s)
 		        If sName.Len = 0 Then Continue
-		        totalW = totalW + 16 + g.TextWidth(sName) + 14
+		        Var itemW As Double = 12 + g.TextWidth(sName) + 6
+		        validIndices.Add(s)
+		        itemWidths.Add(itemW)
+		        totalW = totalW + itemW
 		      Next
-		      Var legX As Double = Max(PlotLeft, PlotLeft + PlotWidth - totalW + 14)
-		      Var legY As Double = PlotTop - 10
-		      For s As Integer = 0 To SeriesCount - 1
-		        Var sName As String = SeriesNames(s)
-		        If sName.Len = 0 Then Continue
-		        Var sCol As Color = SeriesColors(s)
+		      
+		      Var row1Indices() As Integer
+		      Var row2Indices() As Integer
+		      Var row1W As Double = 0
+		      Var row2W As Double = 0
+		      
+		      If totalW <= availW Then
+		        // Fits entirely on 1 row
+		        For i As Integer = 0 To validIndices.LastIndex
+		          row1Indices.Add(validIndices(i))
+		          row1W = row1W + itemWidths(i)
+		        Next
+		      Else
+		        // Balance items evenly across 2 rows (e.g. 8 items -> 4 & 4)
+		        Var splitCount As Integer = Ceil(validIndices.Count / 2.0)
 		        
-		        g.DrawingColor = sCol
-		        g.FillRoundRectangle(legX, legY - 6, 12, 6, 2, 2)
-		        g.DrawingColor = &c333333
-		        g.DrawText(sName, legX + 16, legY)
-		        legX = legX + 16 + g.TextWidth(sName) + 14
-		      Next
+		        For i As Integer = 0 To validIndices.LastIndex
+		          Var idx As Integer = validIndices(i)
+		          Var w As Double = itemWidths(i)
+		          
+		          If i < splitCount And (row1W + w <= availW) Then
+		            row1Indices.Add(idx)
+		            row1W = row1W + w
+		          ElseIf row2W + w <= availW Then
+		            row2Indices.Add(idx)
+		            row2W = row2W + w
+		          Else
+		            Exit For
+		          End If
+		        Next
+		      End If
+		      
+		      If row2Indices.Count = 0 Then
+		        // Single row: right-aligned
+		        Var startX As Double = PlotLeft + PlotWidth - row1W
+		        Var legY As Double = PlotTop - 6
+		        
+		        For Each s As Integer In row1Indices
+		          Var sName As String = SeriesNames(s)
+		          Var sCol As Color = SeriesColors(s)
+		          Var itemW As Double = 12 + g.TextWidth(sName) + 6
+		          
+		          g.DrawingColor = sCol
+		          g.FillRoundRectangle(startX, legY - 5, 8, 5, 2, 2)
+		          g.DrawingColor = &c333333
+		          g.DrawText(sName, startX + 11, legY)
+		          startX = startX + itemW
+		        Next
+		      Else
+		        // Two rows: both strictly right-aligned against right edge
+		        Var startX1 As Double = PlotLeft + PlotWidth - row1W
+		        Var legY1 As Double = PlotTop - 12
+		        For Each s As Integer In row1Indices
+		          Var sName As String = SeriesNames(s)
+		          Var sCol As Color = SeriesColors(s)
+		          Var itemW As Double = 12 + g.TextWidth(sName) + 6
+		          
+		          g.DrawingColor = sCol
+		          g.FillRoundRectangle(startX1, legY1 - 5, 8, 5, 2, 2)
+		          g.DrawingColor = &c333333
+		          g.DrawText(sName, startX1 + 11, legY1)
+		          startX1 = startX1 + itemW
+		        Next
+		        
+		        Var startX2 As Double = PlotLeft + PlotWidth - row2W
+		        Var legY2 As Double = PlotTop - 4
+		        For Each s As Integer In row2Indices
+		          Var sName As String = SeriesNames(s)
+		          Var sCol As Color = SeriesColors(s)
+		          Var itemW As Double = 12 + g.TextWidth(sName) + 6
+		          
+		          g.DrawingColor = sCol
+		          g.FillRoundRectangle(startX2, legY2 - 5, 8, 5, 2, 2)
+		          g.DrawingColor = &c333333
+		          g.DrawText(sName, startX2 + 11, legY2)
+		          startX2 = startX2 + itemW
+		        Next
+		      End If
 		    End Select
 		  End If
 		  
@@ -907,24 +994,30 @@ Protected Class NativeXYPlot
 		  g.FontSize = 8
 		  g.Bold = False
 		  If IsDateAxis Then
-		    // Date/Time scale
+		    // Date/Time scale with collision-free adaptive step
 		    Var xSpan As Double = X_Max - X_Min
 		    If xSpan <= 0 Then xSpan = 3600
-		    Var stepX As Double
-		    If X_MajorTick > 0 Then
+		    
+		    Var sampleLbl As String = "10/09 00:00"
+		    If xSpan > 2 * 86400 Then sampleLbl = "10/09"
+		    Var minLabelSpacing As Double = g.TextWidth(sampleLbl) + 16
+		    Var maxAllowedTicks As Integer = Max(2, Floor(PlotWidth / minLabelSpacing))
+		    
+		    Var stepX As Double = 0
+		    If X_MajorTick > 0 And (xSpan / X_MajorTick) <= maxAllowedTicks Then
 		      stepX = X_MajorTick
-		    ElseIf xSpan > 14 * 86400 Then
-		      stepX = 7 * 86400
-		    ElseIf xSpan > 3 * 86400 Then
-		      stepX = 86400
-		    ElseIf xSpan > 86400 Then
-		      stepX = 43200
-		    ElseIf xSpan > 6 * 3600 Then
-		      stepX = 7200
-		    ElseIf xSpan > 3600 Then
-		      stepX = 1800
 		    Else
-		      stepX = 300
+		      Var candidateSteps() As Double = Array( _
+		        60.0, 300.0, 900.0, 1800.0, 3600.0, 7200.0, 14400.0, 21600.0, 43200.0, _
+		        86400.0, 172800.0, 259200.0, 604800.0, 1209600.0, 2592000.0 _
+		      )
+		      For Each cand As Double In candidateSteps
+		        If (xSpan / cand) <= maxAllowedTicks Then
+		          stepX = cand
+		          Exit For
+		        End If
+		      Next
+		      If stepX = 0 Then stepX = 2592000.0
 		    End If
 		    
 		    Var startX As Double = Ceil(X_Min / stepX) * stepX

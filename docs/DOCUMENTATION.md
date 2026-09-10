@@ -64,8 +64,10 @@ flowchart TD
 | :--- | :--- |
 | `MakeChartPicture([w], [h]) As Picture` | Render static bitmap image. |
 | `Render(g As Graphics, [clearBackground])` | Draw complete chart directly to target graphics context (set `clearBackground=False` when drawing stacked subplots). |
-| `DrawTrackingOverlay(g, mouseX, mouseY, [showValues])` | Draw interactive crosshair and snapped value badges from screen cursor pixel coordinates. |
-| `DrawTrackingOverlayByValue(g, targetDataX, [showValues])` | Draw crosshair and badges snapped to a specific X data domain value (for multi-plot sync). |
+| `MakePDFDocument([fitPage], [landscape]) As PDFDocument` | Render plot directly into a vector `PDFDocument` with embedded fonts and scalable vector paths. |
+| `ExportPDF(file As FolderItem, [fitPage], [landscape])` | Save vector PDF chart directly to a file. |
+| `DrawTrackingOverlay(g, mouseX, mouseY, [showValues], [showLegend])` | Draw interactive crosshair and snapped value badges from screen cursor pixel coordinates. |
+| `DrawTrackingOverlayByValue(g, targetDataX, [showValues], [showLegend])` | Draw crosshair and badges snapped to a specific X data domain value (for multi-plot sync). |
 | `ValueToScreenX(val)` / `ValueToScreenY(val)` | Convert data value to screen pixel coordinate. |
 | `ScreenToValueX(px)` / `ScreenToValueY(px)` | Convert screen pixel coordinate to data value. |
 | `GetNearestXValue(pixelX) As Double` | Find closest X data value to cursor. |
