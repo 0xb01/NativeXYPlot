@@ -365,7 +365,7 @@ Begin DesktopWindow Window1
    End
    Begin DesktopCanvas PlotCanvas
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
+      AllowFocus      =   True
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
@@ -847,7 +847,7 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Office"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: IoT Telemetry | Toggle checkboxes to hide/show series | Hover to inspect values"
+		    StatusLabel.Text = "Mode: IoT Telemetry | Toggle checkboxes to hide/show | Hover values | 'L': toggle legend badge"
 		  Case 1
 		    ChkSeries1.Caption = "Primary Sine"
 		    ChkSeries1.Visible = True
@@ -855,14 +855,14 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Harmonic"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Math Waveforms | Toggle checkboxes to hide/show series | Hover to inspect values"
+		    StatusLabel.Text = "Mode: Math Waveforms | Toggle checkboxes to hide/show | Hover values | 'L': toggle legend badge"
 		  Case 2
 		    ChkSeries1.Caption = "Feed A"
 		    ChkSeries1.Visible = True
 		    ChkSeries2.Caption = "Feed B"
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Visible = False
-		    StatusLabel.Text = "Mode: Live Telemetry Stream (Active Feed) | Toggle checkboxes to hide/show series"
+		    StatusLabel.Text = "Mode: Live Telemetry Stream (Active Feed) | Toggle checkboxes to hide/show | 'L': toggle legend badge"
 		  Case 3
 		    ChkSeries1.Caption = "Relay 1 (Power)"
 		    ChkSeries1.Visible = True
@@ -870,7 +870,7 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Solenoid Valve"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Digital I/O State Timeline | Toggle checkboxes to hide/show series"
+		    StatusLabel.Text = "Mode: Digital I/O State Timeline | Toggle checkboxes to hide/show | 'L': toggle legend badge"
 		  Case 4
 		    ChkSeries1.Caption = "Sync Temp Plot"
 		    ChkSeries1.Visible = True
@@ -878,7 +878,7 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Sync Relay Plot"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Synced 3-Plot | Hover any plot to scrub all 3 | Toggle checkboxes to sync/unlink plots"
+		    StatusLabel.Text = "Mode: Synced 3-Plot | Scrub plots | Toggle sync checkboxes | 'L': toggle legend badge"
 		  End Select
 		  
 		  RedrawPlot()
@@ -916,6 +916,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mIsDragging As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShowTrackingLegend As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1141,7 +1145,20 @@ End
 #tag EndEvents
 #tag Events PlotCanvas
 	#tag Event
+		Function KeyDown(Key As String) As Boolean
+		  If Key.Uppercase = "L" Then
+		    mShowTrackingLegend = Not mShowTrackingLegend
+		    Me.Refresh
+		    Return True
+		  End If
+		  Return False
+		End Function
+	#tag EndEvent
+	#tag Event
 		Function MouseDown(x As Integer, y As Integer) As Boolean
+		  // Set focus to canvas for keyboard shortcuts
+		  Me.SetFocus
+		  
 		  // Start pan drag
 		  mStartX = X
 		  mStartY = Y
@@ -1225,14 +1242,14 @@ End
 		  If mCurrentDemoMode = 4 Then
 		    // Draw linked crosshair overlay across selected plots
 		    If mSharedDataX >= 0 Then
-		      If ChkSeries1.Value And mPlot1 <> Nil Then mPlot1.DrawTrackingOverlayByValue(g, mSharedDataX, True)
-		      If ChkSeries2.Value And mPlot2 <> Nil Then mPlot2.DrawTrackingOverlayByValue(g, mSharedDataX, True)
-		      If ChkSeries3.Value And mPlot3 <> Nil Then mPlot3.DrawTrackingOverlayByValue(g, mSharedDataX, True)
+		      If ChkSeries1.Value And mPlot1 <> Nil Then mPlot1.DrawTrackingOverlayByValue(g, mSharedDataX, True, mShowTrackingLegend)
+		      If ChkSeries2.Value And mPlot2 <> Nil Then mPlot2.DrawTrackingOverlayByValue(g, mSharedDataX, True, mShowTrackingLegend)
+		      If ChkSeries3.Value And mPlot3 <> Nil Then mPlot3.DrawTrackingOverlayByValue(g, mSharedDataX, True, mShowTrackingLegend)
 		    End If
 		  Else
 		    // Draw tracking overlay crosshair on top
 		    If mPlot <> Nil And mMouseX >= 0 Then
-		      mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True)
+		      mPlot.DrawTrackingOverlay(g, mMouseX, mMouseY, True, mShowTrackingLegend)
 		    End If
 		  End If
 		End Sub

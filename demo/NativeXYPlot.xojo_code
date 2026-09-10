@@ -340,8 +340,8 @@ Protected Class NativeXYPlot
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DrawTrackingOverlay(g As Graphics, mouseX As Integer, mouseY As Integer, showValues As Boolean = True)
-		  // Check if graphics is valid and mouse is inside plot
+		Sub DrawTrackingOverlay(g As Graphics, mouseX As Double, mouseY As Double, showValues As Boolean = True, showLegend As Boolean = False)
+		  // Draw vertical tracking guide and value badges
 		  If g Is Nil Then Return
 		  If mouseX < PlotLeft Or mouseX > PlotLeft + PlotWidth Or mouseY < PlotTop Or mouseY > PlotTop + PlotHeight Then
 		    Return
@@ -349,12 +349,12 @@ Protected Class NativeXYPlot
 		  
 		  // Find nearest data X and draw overlay
 		  Var nearestX As Double = GetNearestXValue(mouseX)
-		  DrawTrackingOverlayByValue(g, nearestX, showValues)
+		  DrawTrackingOverlayByValue(g, nearestX, showValues, showLegend)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DrawTrackingOverlayByValue(g As Graphics, targetDataX As Double, showValues As Boolean = True)
+		Sub DrawTrackingOverlayByValue(g As Graphics, targetDataX As Double, showValues As Boolean = True, showLegend As Boolean = False)
 		  // Check if graphics is valid and target X is within visible range
 		  If g Is Nil Then Return
 		  If targetDataX < X_Min - 1e-6 Or targetDataX > X_Max + 1e-6 Then Return
@@ -448,7 +448,7 @@ Protected Class NativeXYPlot
 		          Var valStr As String
 		          Var isStep As Boolean = (s <= SeriesIsStep.LastIndex And SeriesIsStep(s))
 		          If isStep Or UseDiscreteY Then
-			            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
+		            Var fractional As Double = yVals(foundIdx) - Floor(yVals(foundIdx))
 		            If fractional > 0.4 Or yVals(foundIdx) >= 0.8 Then
 		              valStr = "ON"
 		            Else
@@ -456,6 +456,12 @@ Protected Class NativeXYPlot
 		            End If
 		          Else
 		            valStr = yVals(foundIdx).ToString("0.##") + Y_Unit
+		          End If
+		          
+		          If showLegend Or ShowLegendInTrackingBadge Then
+		            If sName.Len > 0 Then
+		              valStr = sName + ": " + valStr
+		            End If
 		          End If
 		          
 		          Var vW As Double = g.TextWidth(valStr) + 8
@@ -683,10 +689,10 @@ Protected Class NativeXYPlot
 		  
 		  // Draw title
 		  If Title.Len > 0 Then
-		    g.DrawingColor = &c000000
-		    g.FontSize = 13
+ 		    g.DrawingColor = &c000000
+		    g.FontSize = 12
 		    g.Bold = True
-		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 25)
+		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 7)
 		    g.DrawText(Title, PlotLeft, titleY)
 		  End If
 		  
@@ -1405,6 +1411,10 @@ Protected Class NativeXYPlot
 
 	#tag Property, Flags = &h0
 		Y_Title As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ShowLegendInTrackingBadge As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
