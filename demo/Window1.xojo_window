@@ -25,12 +25,10 @@ Begin DesktopWindow Window1
    Type            =   0
    Visible         =   True
    Width           =   900
-   Begin DesktopButton BtnIoT
+   Begin DesktopSegmentedButton ModeTabs
       AllowAutoDeactivate=   True
       Bold            =   False
-      Cancel          =   False
-      Caption         =   "IoT Telemetry"
-      Default         =   False
+      Caption         =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -38,14 +36,33 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
+      SegmentCount    =   6
+      Segment(0)\Caption=   "IoT Telemetry"
+      Segment(0)\Enabled=   True
+      Segment(0)\Selected=   True
+      Segment(1)\Caption=   "Waveforms"
+      Segment(1)\Enabled=   True
+      Segment(1)\Selected=   False
+      Segment(2)\Caption=   "Live Feed"
+      Segment(2)\Enabled=   True
+      Segment(2)\Selected=   False
+      Segment(3)\Caption=   "Digital I/O"
+      Segment(3)\Enabled=   True
+      Segment(3)\Selected=   False
+      Segment(4)\Caption=   "Synced 3-Plot"
+      Segment(4)\Enabled=   True
+      Segment(4)\Selected=   False
+      Segment(5)\Caption=   "2x2 Multi-Grid"
+      Segment(5)\Enabled=   True
+      Segment(5)\Selected=   False
       Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   0
       Scope           =   0
+      SelectionStyle  =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -54,131 +71,7 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   95
-   End
-   Begin DesktopButton BtnWave
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Waveforms"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   32
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   120
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   12
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
-   End
-   Begin DesktopButton BtnLive
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Live Feed"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   32
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   215
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   0
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   12
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   85
-   End
-   Begin DesktopButton BtnStates
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Digital I/O"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   32
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   305
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   12
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   85
-   End
-   Begin DesktopButton BtnSync
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Cancel          =   False
-      Caption         =   "Synced 3-Plot"
-      Default         =   False
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   32
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   395
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MacButtonStyle  =   0
-      Scope           =   0
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   12
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   105
+      Width           =   565
    End
    Begin DesktopButton BtnReset
       AllowAutoDeactivate=   True
@@ -193,15 +86,15 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   505
+      Left            =   595
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
-      TabIndex        =   5
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -224,15 +117,15 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   595
+      Left            =   688
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
-      TabIndex        =   6
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -240,7 +133,7 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   85
+      Width           =   88
    End
    Begin DesktopButton BtnExportPDF
       AllowAutoDeactivate=   True
@@ -255,15 +148,15 @@ Begin DesktopWindow Window1
       Height          =   32
       Index           =   -2147483648
       Italic          =   False
-      Left            =   685
+      Left            =   784
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
-      TabIndex        =   7
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -271,7 +164,7 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   85
+      Width           =   96
    End
    Begin DesktopCheckBox ChkSeries1
       AllowAutoDeactivate=   True
@@ -351,7 +244,7 @@ Begin DesktopWindow Window1
       LockRight       =   False
       LockTop         =   True
       Scope           =   0
-      TabIndex        =   9
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -360,6 +253,36 @@ Begin DesktopWindow Window1
       Underline       =   False
       Value           =   True
       Visible         =   True
+      VisualState     =   0
+      Width           =   140
+   End
+   Begin DesktopCheckBox ChkSeries4
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Sync Crosshair"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   480
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   50
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   False
       VisualState     =   0
       Width           =   140
    End
@@ -434,6 +357,33 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  // Ensure segments exist if not loaded from file
+		  If ModeTabs.SegmentCount = 0 Then
+		    Var s0 As New Segment
+		    s0.Caption = "IoT Telemetry"
+		    ModeTabs.AddSegment(s0)
+		    
+		    Var s1 As New Segment
+		    s1.Caption = "Waveforms"
+		    ModeTabs.AddSegment(s1)
+		    
+		    Var s2 As New Segment
+		    s2.Caption = "Live Feed"
+		    ModeTabs.AddSegment(s2)
+		    
+		    Var s3 As New Segment
+		    s3.Caption = "Digital I/O"
+		    ModeTabs.AddSegment(s3)
+		    
+		    Var s4 As New Segment
+		    s4.Caption = "Synced 3-Plot"
+		    ModeTabs.AddSegment(s4)
+		    
+		    Var s5 As New Segment
+		    s5.Caption = "2x2 Multi-Grid"
+		    ModeTabs.AddSegment(s5)
+		  End If
+		  
 		  // Show default demo on open
 		  SetDemoMode(0)
 		End Sub
@@ -579,7 +529,102 @@ End
 		    RenderMode3_DigitalIO(g, targetW, targetH, updateActivePlot)
 		  Case 4
 		    RenderMode4_SyncedPlots(g, targetW, targetH, updateActivePlot)
+		  Case 5
+		    RenderMode5_MultiGrid(g, targetW, targetH, updateActivePlot)
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RenderMode5_MultiGrid(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
+		  // Recipe: 2x2 Multi-Plot Grid Layout (Heterogeneous Chart Types & Scales)
+		  Var grid As New NativeXYPlotGrid(targetW, targetH, 2, 2)
+		  grid.SetSpacing(45, 30, 38, 38, 25, 30)
+		  grid.SyncCrosshair = (ChkSeries4.Value)
+		  grid.ShowSymbols = mShowPoints
+		  
+		  Var showTitles As Boolean = ChkSeries1.Value
+		  Var showLegends As Boolean = ChkSeries2.Value
+		  
+		  // 1. Cell (0, 0): Real-Time Streaming Sensor Feed (Live / Buffer) - Pan/Zoom OFF
+		  Var p00 As NativeXYPlot = grid.Plot(0, 0)
+		  p00.Title = ""
+		  p00.ShowLegend = showLegends
+		  p00.ShowSymbols = mShowPoints
+		  p00.AllowPan = False
+		  p00.AllowZoom = False
+		  p00.SetPlotArea(p00.PlotLeft, p00.PlotTop, p00.PlotWidth, p00.PlotHeight, &cFFFFFF, &cEAEAEA)
+		  Var minX0 As Double = mLiveX(0)
+		  Var maxX0 As Double = mLiveX(mLiveX.LastIndex)
+		  p00.SetXLinearScale(minX0, maxX0)
+		  p00.SetYLinearScale(0.0, 100.0, " psi")
+		  p00.SetYTitle(If(showTitles, "Pressure (psi)", ""))
+		  p00.AddThreshold(30.0, 70.0, &cE0F2F1, &c4DB6AC)
+		  p00.AddSeries(mLiveX, mLiveY1, &c0077B6, "Feed A", 2, mShowPoints)
+		  p00.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2, mShowPoints)
+		  
+		  // 2. Cell (0, 1): Harmonic Math Waveforms & Damped Cosine - Pan/Zoom ON
+		  Var p01 As NativeXYPlot = grid.Plot(0, 1)
+		  p01.Title = ""
+		  p01.ShowLegend = showLegends
+		  p01.ShowSymbols = mShowPoints
+		  p01.AllowPan = True
+		  p01.AllowZoom = True
+		  p01.SetPlotArea(p01.PlotLeft, p01.PlotTop, p01.PlotWidth, p01.PlotHeight, &cFFFFFF, &cEAEAEA)
+		  If mGridVoltMaxX <= mGridVoltMinX Then
+		    mGridVoltMinX = 0.0
+		    mGridVoltMaxX = 100.0
+		  End If
+		  p01.SetXLinearScale(mGridVoltMinX, mGridVoltMaxX)
+		  p01.SetYLinearScale(-10.0, 10.0, " V")
+		  p01.SetYTitle(If(showTitles, "Voltage (V)", ""))
+		  p01.AddThreshold(-5.0, 5.0, &cFFF8E1, &cFFD54F)
+		  p01.AddSeries(mWaveX, mWaveY1, &c3185FC, "Sine", 2, mShowPoints)
+		  p01.AddSeries(mWaveX, mWaveY2, &cE63946, "Damped Cos", 2, mShowPoints)
+		  p01.AddSeries(mWaveX, mWaveY3, &c2A9D8F, "Harmonic", 1, mShowPoints)
+		  
+		  // 3. Cell (1, 0): IoT Climate Telemetry (7 Days) - Pan/Zoom ON
+		  Var p10 As NativeXYPlot = grid.Plot(1, 0)
+		  p10.Title = ""
+		  p10.ShowLegend = showLegends
+		  p10.ShowSymbols = mShowPoints
+		  p10.AllowPan = True
+		  p10.AllowZoom = True
+		  p10.SetPlotArea(p10.PlotLeft, p10.PlotTop, p10.PlotWidth, p10.PlotHeight, &cFFFFFF, &cEAEAEA)
+		  If mGridTempMaxSec <= mGridTempMinSec Then
+		    mGridTempMinSec = mIotDates(0).SecondsFrom1970
+		    mGridTempMaxSec = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		  End If
+		  p10.SetXDateScale(mGridTempMinSec, mGridTempMaxSec)
+		  p10.SetYLinearScale(16.0, 28.0, "°C")
+		  p10.SetYTitle(If(showTitles, "Temperature (°C)", ""))
+		  p10.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
+		  p10.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living", 2, mShowPoints)
+		  p10.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2, mShowPoints)
+		  
+		  // 4. Cell (1, 1): Digital Actuator States (Discrete Channels) - Pan/Zoom OFF
+		  Var p11 As NativeXYPlot = grid.Plot(1, 1)
+		  p11.Title = ""
+		  p11.ShowLegend = showLegends
+		  p11.ShowSymbols = mShowPoints
+		  p11.AllowPan = False
+		  p11.AllowZoom = False
+		  p11.SetPlotArea(p11.PlotLeft, p11.PlotTop, p11.PlotWidth, p11.PlotHeight, &cFFFFFF, &cEAEAEA)
+		  Var stateFirstSec As Double = mStateDates(0).SecondsFrom1970
+		  Var stateEndSec As Double = mStateDates(mStateDates.LastIndex).SecondsFrom1970
+		  p11.SetXDateScale(stateFirstSec, stateEndSec)
+		  p11.SetYDiscreteLabels(Array("Valve", "Pump", "Relay"), -0.2, 3.1)
+		  p11.SetYTitle(If(showTitles, "Channels", ""))
+		  p11.AddDateBooleanSeries(mStateDates, mStateRelay, &c3185FC, "Relay", 2, 2.8, 2.1)
+		  p11.AddDateBooleanSeries(mStateDates, mStatePump, &cE63946, "Pump", 2, 1.8, 1.1)
+		  p11.AddDateBooleanSeries(mStateDates, mStateValve, &c2A9D8F, "Valve", 2, 0.8, 0.1)
+		  
+		  If updateActivePlot Then
+		    Self.mGrid = grid
+		    Self.mPlot = p00
+		  End If
+		  
+		  grid.Render(g, False)
 		End Sub
 	#tag EndMethod
 
@@ -587,6 +632,7 @@ End
 		Private Sub RenderMode0_IoT(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
 		  // Recipe: IoT Climate Telemetry & Comfort Thresholds
 		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.ShowSymbols = mShowPoints
 		  plot.AddTitle("HVAC Climate Telemetry & Comfort Thresholds")
 		  
 		  Var leftMargin As Integer = 38
@@ -609,9 +655,9 @@ End
 		  plot.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
 		  
 		  // Add series if checkbox is checked
-		  If ChkSeries1.Value Then plot.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
-		  If ChkSeries2.Value Then plot.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Master Bedroom", 2)
-		  If ChkSeries3.Value Then plot.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
+		  If ChkSeries1.Value Then plot.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2, mShowPoints)
+		  If ChkSeries2.Value Then plot.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Master Bedroom", 2, mShowPoints)
+		  If ChkSeries3.Value Then plot.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2, mShowPoints)
 		  
 		  // Add event markers
 		  Var event1 As DateTime = DateTime.Now - New DateInterval(0, 0, 5)
@@ -628,6 +674,7 @@ End
 		Private Sub RenderMode1_MathWaveforms(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
 		  // Recipe: Numeric Math Waveforms & Damped Oscillations
 		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.ShowSymbols = mShowPoints
 		  plot.AddTitle("Harmonic Waveforms & Damped Oscillations")
 		  
 		  Var leftMargin As Integer = 38
@@ -648,9 +695,9 @@ End
 		  plot.AddThreshold(-5.0, 5.0, &cFFF8E1, &cFFD54F)
 		  
 		  // Add series if checkbox is checked
-		  If ChkSeries1.Value Then plot.AddSeries(mWaveX, mWaveY1, &c3185FC, "Primary Sine", 2)
-		  If ChkSeries2.Value Then plot.AddSeries(mWaveX, mWaveY2, &cE63946, "Damped Cosine", 2)
-		  If ChkSeries3.Value Then plot.AddSeries(mWaveX, mWaveY3, &c2A9D8F, "Harmonic", 1, True)
+		  If ChkSeries1.Value Then plot.AddSeries(mWaveX, mWaveY1, &c3185FC, "Primary Sine", 2, mShowPoints)
+		  If ChkSeries2.Value Then plot.AddSeries(mWaveX, mWaveY2, &cE63946, "Damped Cosine", 2, mShowPoints)
+		  If ChkSeries3.Value Then plot.AddSeries(mWaveX, mWaveY3, &c2A9D8F, "Harmonic", 1, mShowPoints)
 		  
 		  If updateActivePlot Then Self.mPlot = plot
 		  plot.Render(g, False)
@@ -661,6 +708,7 @@ End
 		Private Sub RenderMode2_LiveStream(g As Graphics, targetW As Integer, targetH As Integer, updateActivePlot As Boolean)
 		  // Recipe: Real-Time Telemetry Streaming Buffer (250ms interval)
 		  Var plot As New NativeXYPlot(targetW, targetH)
+		  plot.ShowSymbols = mShowPoints
 		  plot.AddTitle("Real-Time Telemetry Feed (250ms Buffer)")
 		  
 		  Var leftMargin As Integer = 38
@@ -680,8 +728,8 @@ End
 		  plot.AddThreshold(30.0, 70.0, &cE0F2F1, &c4DB6AC)
 		  
 		  // Add streaming feed series
-		  If ChkSeries1.Value Then plot.AddSeries(mLiveX, mLiveY1, &c0077B6, "Feed A", 2)
-		  If ChkSeries2.Value Then plot.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2)
+		  If ChkSeries1.Value Then plot.AddSeries(mLiveX, mLiveY1, &c0077B6, "Feed A", 2, mShowPoints)
+		  If ChkSeries2.Value Then plot.AddSeries(mLiveX, mLiveY2, &cF77F00, "Feed B", 2, mShowPoints)
 		  
 		  If updateActivePlot Then Self.mPlot = plot
 		  plot.Render(g, False)
@@ -739,6 +787,7 @@ End
 		  
 		  // Plot 1: Temperature (Top)
 		  Var p1 As New NativeXYPlot(targetW, targetH)
+		  p1.ShowSymbols = mShowPoints
 		  p1.AddTitle("Synchronized 3-Plot Scrubbing: Multi-Sensor Analytics")
 		  p1.SetPlotArea(leftMargin, topMargin, plotW, plotH, &cFFFFFF, &cEAEAEA)
 		  p1.SetXDateScale(curMinSec, curMaxSec)
@@ -746,21 +795,22 @@ End
 		  p1.SetYTitle("Temp")
 		  p1.ShowXAxisLabels = False
 		  p1.AddThreshold(20.0, 24.0, &cE8F5E9, &c81C784)
-		  p1.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2)
-		  p1.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2)
-		  p1.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2)
+		  p1.AddDateSeries(mIotDates, mIotRoom1, &c3185FC, "Living Room", 2, mShowPoints)
+		  p1.AddDateSeries(mIotDates, mIotRoom2, &cFA9B70, "Bedroom", 2, mShowPoints)
+		  p1.AddDateSeries(mIotDates, mIotRoom3, &c43AA8B, "Office", 2, mShowPoints)
 		  
 		  // Plot 2: Power & Solar Generation (Middle)
 		  Var p2 As New NativeXYPlot(targetW, targetH)
+		  p2.ShowSymbols = mShowPoints
 		  p2.SetPlotArea(leftMargin, topMargin + plotH + gap, plotW, plotH, &cFFFFFF, &cEAEAEA)
 		  p2.SetXDateScale(curMinSec, curMaxSec)
 		  p2.SetYLinearScale(0.0, 6.0, " kW")
 		  p2.SetYTitle("Power")
 		  p2.ShowXAxisLabels = False
 		  p2.AddThreshold(0.0, 3.5, &cFFF9C4, &cFFF176)
-		  p2.AddDateSeries(mIotDates, mIotPower, &cE63946, "HVAC Load", 2)
-		  p2.AddDateSeries(mIotDates, mIotSolar, &cE9C46A, "Solar PV", 2)
-		  p2.AddDateSeries(mIotDates, mIotGrid, &c264653, "Grid Draw", 2)
+		  p2.AddDateSeries(mIotDates, mIotPower, &cE63946, "HVAC Load", 2, mShowPoints)
+		  p2.AddDateSeries(mIotDates, mIotSolar, &cE9C46A, "Solar PV", 2, mShowPoints)
+		  p2.AddDateSeries(mIotDates, mIotGrid, &c264653, "Grid Draw", 2, mShowPoints)
 		  
 		  // Plot 3: Digital Actuators & Relays (Bottom)
 		  Var p3 As New NativeXYPlot(targetW, targetH)
@@ -810,6 +860,14 @@ End
 		  // Reset pan and zoom to full view
 		  mViewPortLeft = 0.0
 		  mViewPortWidth = 1.0
+		  mGridVoltMinX = 0.0
+		  mGridVoltMaxX = 100.0
+		  If mIotDates.Count > 0 Then
+		    mGridTempMinSec = mIotDates(0).SecondsFrom1970
+		    mGridTempMaxSec = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		  End If
+		  mGrid = Nil
+		  mActiveHitPlot = Nil
 		  RedrawPlot()
 		End Sub
 	#tag EndMethod
@@ -820,14 +878,29 @@ End
 		  mCurrentDemoMode = mode
 		  mViewPortLeft = 0.0
 		  mViewPortWidth = 1.0
+		  mGrid = Nil
+		  mActiveHitPlot = Nil
+		  
+		  If mode >= 0 And mode < ModeTabs.SegmentCount Then
+		    If ModeTabs.SelectedSegmentIndex <> mode Then
+		      ModeTabs.SelectedSegmentIndex = mode
+		    End If
+		  End If
 		  
 		  // Generate data if needed
 		  If mIotDates.Count = 0 Then
 		    GenerateDemoData()
 		  End If
 		  
-		  // Start live timer only for mode 2
-		  If mode = 2 Then
+		  mGridVoltMinX = 0.0
+		  mGridVoltMaxX = 100.0
+		  If mIotDates.Count > 0 Then
+		    mGridTempMinSec = mIotDates(0).SecondsFrom1970
+		    mGridTempMaxSec = mIotDates(mIotDates.LastIndex).SecondsFrom1970
+		  End If
+		  
+		  // Start live timer for streaming modes
+		  If mode = 2 Or mode = 5 Then
 		    SimTimer.Mode = 2
 		  Else
 		    SimTimer.Mode = 0
@@ -837,6 +910,7 @@ End
 		  ChkSeries1.Value = True
 		  ChkSeries2.Value = True
 		  ChkSeries3.Value = True
+		  ChkSeries4.Value = False
 		  
 		  // Update UI labels and checkbox captions
 		  Select Case mode
@@ -847,7 +921,8 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Office"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: IoT Telemetry | Toggle checkboxes to hide/show | Hover values | 'L': toggle legend badge"
+		    ChkSeries4.Visible = False
+		    StatusLabel.Text = "Mode: IoT Telemetry | Toggle checkboxes | Hover values | 'P': toggle dots | 'L': legend badge"
 		  Case 1
 		    ChkSeries1.Caption = "Primary Sine"
 		    ChkSeries1.Visible = True
@@ -855,14 +930,16 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Harmonic"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Math Waveforms | Toggle checkboxes to hide/show | Hover values | 'L': toggle legend badge"
+		    ChkSeries4.Visible = False
+		    StatusLabel.Text = "Mode: Math Waveforms | Toggle checkboxes | Hover values | 'P': toggle dots | 'L': legend badge"
 		  Case 2
 		    ChkSeries1.Caption = "Feed A"
 		    ChkSeries1.Visible = True
 		    ChkSeries2.Caption = "Feed B"
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Visible = False
-		    StatusLabel.Text = "Mode: Live Telemetry Stream (Active Feed) | Toggle checkboxes to hide/show | 'L': toggle legend badge"
+		    ChkSeries4.Visible = False
+		    StatusLabel.Text = "Mode: Live Stream (Active Feed) | Toggle checkboxes | 'P': toggle dots | 'L': legend badge"
 		  Case 3
 		    ChkSeries1.Caption = "Relay 1 (Power)"
 		    ChkSeries1.Visible = True
@@ -870,7 +947,8 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Solenoid Valve"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Digital I/O State Timeline | Toggle checkboxes to hide/show | 'L': toggle legend badge"
+		    ChkSeries4.Visible = False
+		    StatusLabel.Text = "Mode: Digital I/O State Timeline | Toggle checkboxes | 'L': legend badge"
 		  Case 4
 		    ChkSeries1.Caption = "Sync Temp Plot"
 		    ChkSeries1.Visible = True
@@ -878,13 +956,28 @@ End
 		    ChkSeries2.Visible = True
 		    ChkSeries3.Caption = "Sync Relay Plot"
 		    ChkSeries3.Visible = True
-		    StatusLabel.Text = "Mode: Synced 3-Plot | Scrub plots | Toggle sync checkboxes | 'L': toggle legend badge"
+		    ChkSeries4.Visible = False
+		    StatusLabel.Text = "Mode: Synced 3-Plot | Scrub plots | Toggle sync checkboxes | 'P': toggle dots | 'L': legend badge"
+		  Case 5
+		    ChkSeries1.Caption = "Show Titles"
+		    ChkSeries1.Visible = True
+		    ChkSeries2.Caption = "Show Legends"
+		    ChkSeries2.Visible = True
+		    ChkSeries3.Caption = "Real-Time Stream"
+		    ChkSeries3.Visible = True
+		    ChkSeries4.Caption = "Sync Crosshairs"
+		    ChkSeries4.Visible = True
+		    StatusLabel.Text = "Mode: 2x2 Multi-Grid | Pan/zoom on Voltage & Temp | Toggle titles/legends | 'P': toggle dots | 'L': legend badge"
 		  End Select
 		  
 		  RedrawPlot()
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mShowPoints As Boolean = True
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBasePicture As Picture
@@ -951,6 +1044,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGrid As NativeXYPlotGrid
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mActiveHitPlot As NativeXYPlot
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPlot1 As NativeXYPlot
 	#tag EndProperty
 
@@ -988,6 +1089,22 @@ End
 
 	#tag Property, Flags = &h21
 		Private mStateValve() As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGridVoltMinX As Double = 0.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGridVoltMaxX As Double = 100.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGridTempMinSec As Double = 0.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGridTempMaxSec As Double = 0.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1037,43 +1154,11 @@ End
 
 #tag EndWindowCode
 
-#tag Events BtnIoT
+#tag Events ModeTabs
 	#tag Event
-		Sub Pressed()
-		  // Switch to IoT demo
-		  SetDemoMode(0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BtnWave
-	#tag Event
-		Sub Pressed()
-		  // Switch to Waveforms demo
-		  SetDemoMode(1)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BtnLive
-	#tag Event
-		Sub Pressed()
-		  // Switch to Live Sim Feed demo
-		  SetDemoMode(2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BtnStates
-	#tag Event
-		Sub Pressed()
-		  // Switch to Digital I/O demo
-		  SetDemoMode(3)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BtnSync
-	#tag Event
-		Sub Pressed()
-		  // Switch to Synced 3-Plot Linked Crosshair demo
-		  SetDemoMode(4)
+		Sub Pressed(segmentIndex As Integer)
+		  // Switch active demo mode tab
+		  SetDemoMode(segmentIndex)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1143,12 +1228,25 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ChkSeries4
+	#tag Event
+		Sub ValueChanged()
+		  // Redraw when checkbox toggled
+		  RedrawPlot()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events PlotCanvas
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
 		  If Key.Uppercase = "L" Then
 		    mShowTrackingLegend = Not mShowTrackingLegend
 		    Me.Refresh
+		    Return True
+		  ElseIf Key.Uppercase = "P" Then
+		    mShowPoints = Not mShowPoints
+		    StatusLabel.Text = "Data Points (dots): " + If(mShowPoints, "Visible (Lines + Dots)", "Hidden (Lines Only)") + " | 'P': toggle dots | 'L': legend badge"
+		    RedrawPlot()
 		    Return True
 		  End If
 		  Return False
@@ -1163,14 +1261,41 @@ End
 		  mStartX = X
 		  mStartY = Y
 		  mIsDragging = True
+		  
+		  If mCurrentDemoMode = 5 And mGrid <> Nil Then
+		    mActiveHitPlot = mGrid.GetPlotAt(X, Y)
+		  End If
 		  Return True
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub MouseDrag(x As Integer, y As Integer)
 		  // Pan viewport while dragging
-		  If mPlot = Nil Or Not mIsDragging Then Return
+		  If Not mIsDragging Then Return
 		  
+		  If mCurrentDemoMode = 5 And mGrid <> Nil Then
+		    If mActiveHitPlot <> Nil Then
+		      Var deltaPix As Integer = mStartX - X
+		      If mGrid.HandleMouseDrag(deltaPix, 0, mActiveHitPlot) Then
+		        Var pVolt As NativeXYPlot = mGrid.Plot(0, 1)
+		        If pVolt <> Nil Then
+		          mGridVoltMinX = pVolt.X_Min
+		          mGridVoltMaxX = pVolt.X_Max
+		        End If
+		        Var pTemp As NativeXYPlot = mGrid.Plot(1, 0)
+		        If pTemp <> Nil Then
+		          mGridTempMinSec = pTemp.X_Min
+		          mGridTempMaxSec = pTemp.X_Max
+		        End If
+		        mStartX = X
+		        mStartY = Y
+		        RedrawPlot()
+		      End If
+		    End If
+		    Return
+		  End If
+		  
+		  If mPlot = Nil Then Return
 		  Var deltaPix As Integer = mStartX - X
 		  If deltaPix = 0 Then Return
 		  
@@ -1208,8 +1333,26 @@ End
 	#tag Event
 		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
 		  // Zoom in / out at cursor point
-		  If mPlot = Nil Then Return False
+		  If mCurrentDemoMode = 5 And mGrid <> Nil Then
+		    Var handled As Boolean = mGrid.HandleMouseWheel(X, Y, deltaX, deltaY, 1.2)
+		    If handled Then
+		      Var pVolt As NativeXYPlot = mGrid.Plot(0, 1)
+		      If pVolt <> Nil Then
+		        mGridVoltMinX = pVolt.X_Min
+		        mGridVoltMaxX = pVolt.X_Max
+		      End If
+		      Var pTemp As NativeXYPlot = mGrid.Plot(1, 0)
+		      If pTemp <> Nil Then
+		        mGridTempMinSec = pTemp.X_Min
+		        mGridTempMaxSec = pTemp.X_Max
+		      End If
+		      RedrawPlot()
+		      Return True
+		    End If
+		    Return False
+		  End If
 		  
+		  If mPlot = Nil Then Return False
 		  Var zoomFactor As Double = 1.2
 		  Var plotW As Double = Max(1, mPlot.PlotWidth)
 		  Var focusRatio As Double = ((X - mPlot.PlotLeft) * 1.0) / plotW
@@ -1239,7 +1382,12 @@ End
 		    g.DrawPicture(mBasePicture, 0, 0)
 		  End If
 		  
-		  If mCurrentDemoMode = 4 Then
+		  If mCurrentDemoMode = 5 Then
+		    // Draw grid tracking overlay
+		    If mGrid <> Nil And mMouseX >= 0 Then
+		      mGrid.DrawTrackingOverlay(g, mMouseX, mMouseY, True, mShowTrackingLegend)
+		    End If
+		  ElseIf mCurrentDemoMode = 4 Then
 		    // Draw linked crosshair overlay across selected plots
 		    If mSharedDataX >= 0 Then
 		      If ChkSeries1.Value And mPlot1 <> Nil Then mPlot1.DrawTrackingOverlayByValue(g, mSharedDataX, True, mShowTrackingLegend)
@@ -1259,7 +1407,7 @@ End
 	#tag Event
 		Sub Action()
 		  // Advance live data simulation step
-		  If mCurrentDemoMode <> 2 Then Return
+		  If mCurrentDemoMode <> 2 And Not (mCurrentDemoMode = 5 And ChkSeries3.Value) Then Return
 		  
 		  mLiveStep = mLiveStep + 1
 		  mLiveX.Add(mLiveStep * 1.0)

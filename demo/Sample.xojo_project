@@ -5,6 +5,7 @@ OrigIDEVersion=20260201
 Class=App;App.xojo_code;&h000000005F0A0FFF;&h0000000000000000;false
 DesktopWindow=Window1;Window1.xojo_window;&h000000005E3EBFFF;&h0000000000000000;false
 Class=NativeXYPlot;NativeXYPlot.xojo_code;&h000000000618E800;&h0000000000000000;false
+Class=NativeXYPlotGrid;NativeXYPlotGrid.xojo_code;&h000000000618E801;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h000000007ADF6FFF;&h0000000000000000;false
 BuildSteps=Build Automation;Build Automation.xojo_code;&h000000007805D7FF;&h0000000000000000;false
 DefaultWindow=Window1

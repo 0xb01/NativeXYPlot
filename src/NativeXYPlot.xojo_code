@@ -1,5 +1,20 @@
 #tag Class
 Protected Class NativeXYPlot
+	#tag Note, Name = Readme
+		NativeXYPlot - Fast, Lightweight, Pure Native Chart Engine for Xojo
+		=====================================================================
+		
+		GitHub Repository:
+		https://github.com/0xb01/NativeXYPlot
+		
+		Documentation:
+		https://github.com/0xb01/NativeXYPlot/blob/main/docs/DOCUMENTATION.md
+		
+		License: MIT License
+		
+		Contributions, issues, and feature suggestions are welcome and appreciated!
+	#tag EndNote
+
 	#tag Method, Flags = &h0
 		Sub AddBooleanSeries(xValues() As Double, states() As Boolean, c As Color, name As String = "", lineWidth As Integer = 2, highVal As Double = 1.0, lowVal As Double = 0.0)
 		  // Convert True/False states to high/low numbers
@@ -342,7 +357,7 @@ Protected Class NativeXYPlot
 	#tag Method, Flags = &h0
 		Sub DrawTrackingOverlay(g As Graphics, mouseX As Double, mouseY As Double, showValues As Boolean = True, showLegend As Boolean = False)
 		  // Draw vertical tracking guide and value badges
-		  If g Is Nil Then Return
+		  If g Is Nil Or Not Visible Then Return
 		  If mouseX < PlotLeft Or mouseX > PlotLeft + PlotWidth Or mouseY < PlotTop Or mouseY > PlotTop + PlotHeight Then
 		    Return
 		  End If
@@ -356,7 +371,7 @@ Protected Class NativeXYPlot
 	#tag Method, Flags = &h0
 		Sub DrawTrackingOverlayByValue(g As Graphics, targetDataX As Double, showValues As Boolean = True, showLegend As Boolean = False)
 		  // Check if graphics is valid and target X is within visible range
-		  If g Is Nil Then Return
+		  If g Is Nil Or Not Visible Then Return
 		  If targetDataX < X_Min - 1e-6 Or targetDataX > X_Max + 1e-6 Then Return
 		  
 		  Var clampedTargetX As Double = Max(X_Min, Min(targetDataX, X_Max))
@@ -674,8 +689,8 @@ Protected Class NativeXYPlot
 
 	#tag Method, Flags = &h0
 		Sub Render(g As Graphics, clearBackground As Boolean = True)
-		  // Check if graphics is valid
-		  If g Is Nil Then Return
+		  // Check if graphics is valid and plot is visible
+		  If g Is Nil Or Not Visible Then Return
 		  
 		  // Draw outer background if requested
 		  If clearBackground Then
@@ -691,10 +706,10 @@ Protected Class NativeXYPlot
 		  Var titleW As Double = 0
 		  If Title.Len > 0 Then
 		    g.DrawingColor = &c000000
-		    g.FontSize = 12
+		    g.FontSize = If(PlotHeight < 180, 10, 12)
 		    g.Bold = True
 		    titleW = g.TextWidth(Title)
-		    Var titleY As Double = Max(g.FontAscent + 2, PlotTop - 25)
+		    Var titleY As Double = If(Y_Title.Len > 0, PlotTop - 18, PlotTop - 6)
 		    g.DrawText(Title, PlotLeft, titleY)
 		  End If
 		  
@@ -1113,7 +1128,7 @@ Protected Class NativeXYPlot
 		    
 		    Var cColor As Color = SeriesColors(s)
 		    Var lWidth As Integer = SeriesLineWidths(s)
-		    Var showSym As Boolean = SeriesShowSymbols(s)
+		    Var showSym As Boolean = SeriesShowSymbols(s) And ShowSymbols
 		    Var isStep As Boolean = False
 		    If s <= SeriesIsStep.LastIndex Then isStep = SeriesIsStep(s)
 		    
@@ -1456,6 +1471,22 @@ Protected Class NativeXYPlot
 
 	#tag Property, Flags = &h0
 		ShowLegend As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		AllowZoom As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		AllowPan As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Visible As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ShowSymbols As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
